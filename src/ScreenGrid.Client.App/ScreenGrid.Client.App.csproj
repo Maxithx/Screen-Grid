@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>ScreenGrid.Client.App</RootNamespace>
+    <AssemblyName>ScreenGrid</AssemblyName>
+    <UseWPF>true</UseWPF>
+
+    <!-- Localization: English is the neutral (fallback) language. -->
+    <EnableDefaultEmbeddedResourceItems>true</EnableDefaultEmbeddedResourceItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+  <!--
+    ScreenGrid.Client.App is the WPF viewer/front-end.
+    Phase 1 only contains UI. Networking, capture, crypto and the real
+    remote-control pipeline are added in later phases (see docs/ROADMAP.md).
+  -->
+
+</Project>

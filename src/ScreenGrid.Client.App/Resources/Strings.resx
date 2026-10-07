@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>ScreenGrid</value>
+  </data>
+  <data name="AppTagline" xml:space="preserve">
+    <value>Secure, open-source remote desktop</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ToggleTheme" xml:space="preserve">
+    <value>Toggle theme</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="ShareTitle" xml:space="preserve">
+    <value>Share Your Computer</value>
+  </data>
+  <data name="ShareSubtitle" xml:space="preserve">
+    <value>Let someone else connect to this device.</value>
+  </data>
+  <data name="YourId" xml:space="preserve">
+    <value>Your ID</value>
+  </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Copied" xml:space="preserve">
+    <value>Copied to clipboard</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Regenerate" xml:space="preserve">
+    <value>Regenerate</value>
+  </data>
+  <data name="ShowPassword" xml:space="preserve">
+    <value>Show password</value>
+  </data>
+  <data name="HidePassword" xml:space="preserve">
+    <value>Hide password</value>
+  </data>
+  <data name="ReadyForConnections" xml:space="preserve">
+    <value>Ready for connections</value>
+  </data>
+  <data name="NotAcceptingConnections" xml:space="preserve">
+    <value>Not accepting connections</value>
+  </data>
+  <data name="AcceptIncoming" xml:space="preserve">
+    <value>Accept incoming connections</value>
+  </data>
+  <data name="AccessTitle" xml:space="preserve">
+    <value>Get Access to Computer</value>
+  </data>
+  <data name="AccessSubtitle" xml:space="preserve">
+    <value>Enter a remote ID to start a session.</value>
+  </data>
+  <data name="RemoteIdLabel" xml:space="preserve">
+    <value>Remote ID</value>
+  </data>
+  <data name="RemoteIdPlaceholder" xml:space="preserve">
+    <value>e.g. 123 456 789</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="RecentConnections" xml:space="preserve">
+    <value>Recent connections</value>
+  </data>
+  <data name="NoRecentConnections" xml:space="preserve">
+    <value>No recent connections yet.</value>
+  </data>
+  <data name="SessionConnecting" xml:space="preserve">
+    <value>Connecting…</value>
+  </data>
+  <data name="WaitingForVideo" xml:space="preserve">
+    <value>Waiting for remote video…</value>
+  </data>
+  <data name="Disconnect" xml:space="preserve">
+    <value>Disconnect</value>
+  </data>
+  <data name="SessionWith" xml:space="preserve">
+    <value>Session with {0}</value>
+  </data>
+  <data name="StatusReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>v{0}</value>
+  </data>
+  <data name="SettingsGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsSecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="SettingsStartWithWindows" xml:space="preserve">
+    <value>Start ScreenGrid with Windows</value>
+  </data>
+  <data name="SettingsRequirePassword" xml:space="preserve">
+    <value>Require a password for incoming connections</value>
+  </data>
+  <data name="SettingsAutoAccept" xml:space="preserve">
+    <value>Automatically accept verified devices</value>
+  </data>
+  <data name="SettingsAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsAboutText" xml:space="preserve">
+    <value>ScreenGrid is an open-source, end-to-end encrypted remote desktop client. Nothing entered here leaves your device yet — this is the Phase 1 user interface.</value>
+  </data>
+</root>

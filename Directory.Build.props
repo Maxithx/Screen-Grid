@@ -1,0 +1,22 @@
+<Project>
+
+  <!--
+    Shared MSBuild properties for every project in the ScreenGrid solution.
+    Keeping these here guarantees a consistent language level, nullable context
+    and assembly metadata across all components (Client, Host, Signaling, ...).
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>false</InvariantGlobalization>
+
+    <Version>0.1.0</Version>
+    <Company>ScreenGrid</Company>
+    <Product>ScreenGrid</Product>
+    <Authors>ScreenGrid contributors</Authors>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Copyright (c) ScreenGrid contributors. Licensed under AGPL-3.0-or-later.</Copyright>
+  </PropertyGroup>
+
+</Project>

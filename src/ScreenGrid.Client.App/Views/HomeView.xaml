@@ -1,0 +1,216 @@
+<UserControl
+    x:Class="ScreenGrid.Client.App.Views.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ScreenGrid.Client.App.Resources"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:ScreenGrid.Client.App.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=vm:HomeViewModel}">
+
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="24" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ Share Your Computer ============ -->
+        <Border Grid.Column="0" Style="{StaticResource PanelCardStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource SectionTitleStyle}"
+                           Text="{x:Static res:Strings.ShareTitle}" />
+                <TextBlock Grid.Row="1" Margin="0,4,0,20" Style="{StaticResource SectionSubtitleStyle}"
+                           Text="{x:Static res:Strings.ShareSubtitle}" />
+
+                <TextBlock Grid.Row="2" Style="{StaticResource FieldLabelStyle}"
+                           Text="{x:Static res:Strings.YourId}" />
+                <Grid Grid.Row="3" Margin="0,0,0,18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource IdDisplayStyle}">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Consolas"
+                            FontSize="20"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Text="{Binding Share.DisplayId}" />
+                    </Border>
+                    <ui:Button
+                        Grid.Column="2"
+                        Appearance="Secondary"
+                        Command="{Binding Share.CopyIdCommand}"
+                        Icon="{ui:SymbolIcon Copy24}"
+                        ToolTip="{x:Static res:Strings.Copy}" />
+                </Grid>
+
+                <TextBlock Grid.Row="4" Style="{StaticResource FieldLabelStyle}"
+                           Text="{x:Static res:Strings.PasswordLabel}" />
+                <Grid Grid.Row="5" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="4" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Style="{StaticResource IdDisplayStyle}">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Consolas"
+                            FontSize="18"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Text="{Binding Share.DisplayPassword}" />
+                    </Border>
+                    <ui:Button
+                        Grid.Column="2"
+                        Appearance="Secondary"
+                        Command="{Binding Share.TogglePasswordVisibilityCommand}"
+                        Icon="{ui:SymbolIcon Eye24}"
+                        ToolTip="{Binding Share.TogglePasswordVisibilityTooltip}" />
+                    <ui:Button
+                        Grid.Column="4"
+                        Appearance="Secondary"
+                        Command="{Binding Share.RegeneratePasswordCommand}"
+                        Icon="{ui:SymbolIcon ArrowSync24}"
+                        ToolTip="{x:Static res:Strings.Regenerate}" />
+                </Grid>
+
+                <StackPanel Grid.Row="6" Orientation="Horizontal">
+                    <Ellipse Width="8" Height="8" VerticalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Fill" Value="{DynamicResource OfflineStatusBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Share.IsAcceptingConnections}" Value="True">
+                                        <Setter Property="Fill" Value="{DynamicResource OnlineStatusBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <TextBlock
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        Text="{Binding Share.StatusText}" />
+                </StackPanel>
+
+                <ui:ToggleSwitch
+                    Grid.Row="8"
+                    Content="{x:Static res:Strings.AcceptIncoming}"
+                    IsChecked="{Binding Share.IsAcceptingConnections}" />
+            </Grid>
+        </Border>
+
+        <!-- ============ Get Access to Computer ============ -->
+        <Border Grid.Column="2" Style="{StaticResource PanelCardStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Style="{StaticResource SectionTitleStyle}"
+                           Text="{x:Static res:Strings.AccessTitle}" />
+                <TextBlock Grid.Row="1" Margin="0,4,0,20" Style="{StaticResource SectionSubtitleStyle}"
+                           Text="{x:Static res:Strings.AccessSubtitle}" />
+
+                <TextBlock Grid.Row="2" Style="{StaticResource FieldLabelStyle}"
+                           Text="{x:Static res:Strings.RemoteIdLabel}" />
+                <ui:TextBox
+                    Grid.Row="3"
+                    Margin="0,0,0,18"
+                    Icon="{ui:SymbolIcon Desktop24}"
+                    PlaceholderText="{x:Static res:Strings.RemoteIdPlaceholder}"
+                    Text="{Binding Access.RemoteId, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Row="4" Style="{StaticResource FieldLabelStyle}"
+                           Text="{x:Static res:Strings.PasswordLabel}" />
+                <ui:PasswordBox
+                    Grid.Row="5"
+                    Margin="0,0,0,20"
+                    Password="{Binding Access.Password, Mode=TwoWay}"
+                    RevealButtonEnabled="True" />
+
+                <ui:Button
+                    Grid.Row="6"
+                    Height="42"
+                    HorizontalAlignment="Stretch"
+                    Appearance="Primary"
+                    Command="{Binding Access.ConnectCommand}"
+                    Content="{x:Static res:Strings.Connect}"
+                    Icon="{ui:SymbolIcon PlugConnected24}" />
+
+                <TextBlock Grid.Row="7" Margin="0,24,0,8" Style="{StaticResource FieldLabelStyle}"
+                           Text="{x:Static res:Strings.RecentConnections}" />
+                <ItemsControl Grid.Row="8" ItemsSource="{Binding Access.RecentConnections}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ui:Button
+                                Margin="0,2"
+                                Padding="10,8"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Center"
+                                Appearance="Transparent"
+                                Command="{Binding DataContext.Access.ConnectToRecentCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="{Binding Name}" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                            Text="{Binding Id}" />
+                                    </StackPanel>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                        Text="{Binding LastUsed}" />
+                                </Grid>
+                            </ui:Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>
