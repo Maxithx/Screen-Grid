@@ -61,8 +61,8 @@
   /* ---- SVG graph styling ---- */
   .node{cursor:pointer}
   .node .box{fill:var(--panel2); stroke:var(--border2); stroke-width:1.5; transition:.15s}
-  .node .t{fill:var(--text); font-size:14px; font-weight:600}
-  .node .s{fill:var(--muted); font-size:11.5px}
+  .node .t{fill:var(--text); font-size:13px; font-weight:600}
+  .node .s{fill:var(--muted); font-size:11px}
   .node.k-app .box{stroke:var(--app)}
   .node.k-server .box{stroke:var(--server)}
   .node.k-lib .box{stroke:var(--lib)}
@@ -178,7 +178,7 @@ const S_phases = {
     N('crypto',300,528,'ScreenGrid.Crypto','E2EE · identitet','lib',5,
       'Per-device identitetsnøgler (Ed25519) og end-to-end kryptering af media + input.',
       ['Ed25519 device-keys (NSec)','AEAD: ChaCha20-Poly1305','Session-password / engangs-tokens']),
-    N('community',300,632,'Community / streaming app','Genbrug af Transport + Media','app',6,
+    N('community',300,632,'Community & streaming','Genbrug af Transport + Media','app',6,
       'Fremtidig Discord-lignende app der genbruger Transport + Media til gruppe-streams.',
       ['Gruppe-skærmsdeling','Presence + chat','Reuse af Transport + Media'])
   ],
@@ -336,6 +336,7 @@ function laneLabel(L){
        + `<text class="flow-note" x="34" y="${L.y+50}">${esc(sub)}</text>`
        + `<text class="flow-note" x="34" y="${L.y+L.h-18}">${esc(p.s)}</text>`;
 }
+function label(n){ return String(n.title).replace(/^ScreenGrid\./, ''); }
 function nodeSvg(n){
   const {w,h}=wh(n);
   const cls=['node','k-'+n.kind];
@@ -346,10 +347,10 @@ function nodeSvg(n){
   let s=`<g class="${cls.join(' ')}" data-id="${n.id}" transform="translate(${n.x},${n.y})">`;
   s+=`<rect class="box" width="${w}" height="${h}" rx="12"></rect>`;
   if(n.phase){
-    s+=`<circle class="pcirc" cx="${w-20}" cy="20" r="11"></circle>`;
-    s+=`<text class="pnum" x="${w-20}" y="20">${n.phase}</text>`;
+    s+=`<circle class="pcirc" cx="${w-16}" cy="16" r="10"></circle>`;
+    s+=`<text class="pnum" x="${w-16}" y="16">${n.phase}</text>`;
   }
-  s+=`<text class="t" x="16" y="${ty}">${esc(n.title)}</text>`;
+  s+=`<text class="t" x="16" y="${ty}">${esc(label(n))}</text>`;
   s+=`<text class="s" x="16" y="${sy}">${esc(n.sub)}</text>`;
   s+=`</g>`;
   return s;
