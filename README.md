@@ -78,6 +78,5 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 
 ## License
 
-ScreenGrid is intended to be released under **AGPL-3.0-or-later** (a `LICENSE`
-file will be added before the first public release). ScreenGrid links against
-**WPF-UI**, which is MIT licensed.
+ScreenGrid is released under **AGPL-3.0-or-later** — see [`LICENSE`](LICENSE).
+ScreenGrid links against **WPF-UI**, which is MIT licensed.

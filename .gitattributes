@@ -1,0 +1,31 @@
+# ScreenGrid — line-ending & diff normalisation.
+# The repository stores LF; checkouts use the platform default.
+* text=auto
+
+*.cs       text diff=csharp
+*.csproj   text
+*.props    text
+*.targets  text
+*.slnx     text
+*.xaml     text
+*.resx     text
+*.md       text
+*.json     text
+*.yml      text
+*.yaml     text
+*.html     text
+*.ps1      text eol=crlf
+*.cmd      text eol=crlf
+*.bat      text eol=crlf
+*.sh       text eol=lf
+
+# Binary assets — never touch line endings.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.dll   binary
+*.exe   binary
+*.pdb   binary
+*.bin   binary
+*.mmdb  binary

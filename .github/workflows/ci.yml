@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore ScreenGrid.slnx
+
+      - name: Build
+        run: dotnet build ScreenGrid.slnx -c Release --no-restore
+
+      # Enforce the hard file-size ceiling from docs/ARCHITECTURE.md (1000 lines).
+      - name: File-size guard (max 1000 lines)
+        shell: pwsh
+        run: |
+          $limit = 1000
+          $bad = Get-ChildItem -Path . -Recurse -File -Include *.cs,*.xaml |
+                 Where-Object { $_.FullName -notmatch '\\\\(obj|bin)\\\\' } |
+                 Where-Object { (Get-Content $_.FullName | Measure-Object -Line).Lines -gt $limit }
+          if ($bad) {
+            $bad | ForEach-Object { Write-Host "::error file=$($_.FullName)::$($_.Name) exceeds $limit lines" }
+            exit 1
+          }
+          Write-Host "All source files are within the $limit-line hard ceiling."
