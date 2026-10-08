@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ScreenGrid · Arkitektur-kort</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#0a0e14; --panel:#161b22; --panel2:#1c2230;
+    --border:#30363d; --border2:#3d444d; --text:#e6edf3; --muted:#8b949e;
+    --accent:#58a6ff;
+    --app:#1f6feb; --server:#8957e5; --lib:#2ea043; --shared:#d29922;
+    --ext:#6e7681; --test:#6e7681;
+    --p1:#3fb950; --p2:#58a6ff; --p3:#d29922; --p4:#db6d28; --p5:#f85149; --p6:#a371f7;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 700px at 20% -10%,#131a24 0%,var(--bg) 55%,var(--bg2) 100%);
+    color:var(--text); display:flex; flex-direction:column; overflow:hidden;
+  }
+  header{
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+    padding:12px 20px; border-bottom:1px solid var(--border);
+    background:rgba(22,27,34,.72); backdrop-filter:blur(10px);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px}
+  .brand .dot{width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--app),var(--server))}
+  .brand small{color:var(--muted);font-weight:400;margin-left:6px}
+  nav.tabs{display:flex; gap:6px; flex-wrap:wrap}
+  nav.tabs button{
+    background:var(--panel); color:var(--muted); border:1px solid var(--border);
+    padding:7px 14px; border-radius:999px; cursor:pointer; font-size:13px; font-weight:500;
+    transition:.15s;
+  }
+  nav.tabs button:hover{color:var(--text); border-color:var(--border2)}
+  nav.tabs button.active{background:var(--accent); color:#06131f; border-color:var(--accent); font-weight:600}
+  main{flex:1; display:flex; min-height:0}
+  #stage{flex:1; position:relative; min-width:0}
+  svg#graph{width:100%; height:100%; display:block; cursor:grab}
+  svg#graph.panning{cursor:grabbing}
+  aside#details{
+    width:340px; flex:0 0 340px; border-left:1px solid var(--border);
+    background:var(--panel); padding:20px; overflow:auto;
+  }
+  aside#details h3{margin:0 0 4px; font-size:16px}
+  aside#details .kind{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
+  aside#details p{font-size:13px; line-height:1.55; color:#c9d1d9}
+  aside#details ul{margin:8px 0; padding-left:18px; font-size:13px; line-height:1.7; color:#c9d1d9}
+  .badge{display:inline-block; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:600; margin:6px 6px 0 0}
+  #legend{
+    position:absolute; left:16px; bottom:16px; display:flex; gap:14px; flex-wrap:wrap;
+    background:rgba(22,27,34,.82); border:1px solid var(--border); border-radius:12px;
+    padding:10px 14px; font-size:11.5px; color:var(--muted); backdrop-filter:blur(8px);
+  }
+  #legend span{display:flex; align-items:center; gap:6px}
+  #legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .hint{position:absolute; right:16px; top:14px; font-size:11.5px; color:var(--muted);
+        background:rgba(22,27,34,.82); border:1px solid var(--border); border-radius:10px; padding:6px 12px}
+  /* ---- SVG graph styling ---- */
+  .node{cursor:pointer}
+  .node .box{fill:var(--panel2); stroke:var(--border2); stroke-width:1.5; transition:.15s}
+  .node .t{fill:var(--text); font-size:14px; font-weight:600}
+  .node .s{fill:var(--muted); font-size:11.5px}
+  .node.k-app .box{stroke:var(--app)}
+  .node.k-server .box{stroke:var(--server)}
+  .node.k-lib .box{stroke:var(--lib)}
+  .node.k-shared .box{stroke:var(--shared)}
+  .node.k-ext .box{stroke:var(--ext); stroke-dasharray:5 4}
+  .node.k-test .box{stroke:var(--test); stroke-dasharray:5 4}
+  .node:hover .box{fill:#243044; stroke-width:2.4}
+  .node.selected .box{fill:#243044; stroke-width:2.6; filter:drop-shadow(0 0 8px rgba(88,166,255,.5))}
+  .node .pnum{fill:#06131f; font-size:11px; font-weight:700; text-anchor:middle; dominant-baseline:central}
+  .node .pcirc{fill:var(--muted)}
+  .node.p1 .pcirc{fill:var(--p1)} .node.p2 .pcirc{fill:var(--p2)}
+  .node.p3 .pcirc{fill:var(--p3)} .node.p4 .pcirc{fill:var(--p4)}
+  .node.p5 .pcirc{fill:var(--p5)} .node.p6 .pcirc{fill:var(--p6)}
+  .edge{fill:none; stroke:var(--border2); stroke-width:1.6; transition:.15s}
+  .edge.dep{stroke:#57606a}
+  .edge.data{stroke:var(--app)}
+  .edge.control{stroke:var(--server)}
+  .edge.dashed{stroke-dasharray:6 5}
+  .edge.hot{stroke:var(--accent); stroke-width:2.6}
+  .edge.dim{opacity:.12}
+  .node.dim{opacity:.22}
+  .leaf{fill:var(--border2); font-size:10.5px}
+  .lane{fill:rgba(255,255,255,.017)}
+  .lane-label{fill:var(--muted); font-size:12px; font-weight:600; letter-spacing:.06em}
+  .scene-title{fill:var(--muted); font-size:12.5px; font-weight:600; letter-spacing:.05em}
+  .group-box{fill:none; stroke:var(--border); stroke-width:1.2; stroke-dasharray:6 6}
+  .group-label{fill:var(--muted); font-size:12px; font-weight:600}
+  .flow-note{fill:var(--muted); font-size:11.5px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span>ScreenGrid<small>· arkitektur-kort</small></div>
+  <nav class="tabs">
+    <button data-scene="phases" class="active">Faser</button>
+    <button data-scene="deps">Projekter &amp; afhængigheder</button>
+    <button data-scene="dataflow">Dataflow</button>
+    <button data-scene="runtime">Runtime-topologi</button>
+  </nav>
+</header>
+
+<main>
+  <div id="stage">
+    <svg id="graph" viewBox="0 0 1240 780" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="hint">Hover = fremhæv · Klik = detaljer · Træk = panorér · Scroll = zoom</div>
+    <div id="legend"></div>
+  </div>
+  <aside id="details">
+    <div class="kind">Vælg en node</div>
+    <h3>ScreenGrid arkitektur</h3>
+    <p>Klik på en node i diagrammet for at se ansvar, fase og afhængigheder.
+       Brug fanerne ovenfor til at skifte mellem faser, afhængigheder, dataflow og runtime-topologi.</p>
+  </aside>
+</main>
+
+<script>
+/* ============================================================
+   ScreenGrid — arkitektur-kort
+   Rent visuelt planlægningsværktøj. Ingen app-kode.
+   Data er beskrevet som noder + kanter (edges) pr. "scene".
+   ============================================================ */
+const NW = 212, NH = 70;
+
+const KIND = {
+  app:'Applikation (WPF)', server:'Server (control plane)', lib:'Bibliotek / modul',
+  shared:'Delt kontrakt', ext:'Ekstern / OS', test:'Test-projekt'
+};
+const PHASES = {
+  1:{t:'Fase 1 — Front-page UI',       s:'Færdig',   c:'var(--p1)'},
+  2:{t:'Fase 2 — Signaling + transport',s:'Næste',    c:'var(--p2)'},
+  3:{t:'Fase 3 — Capture + media',      s:'Planlagt', c:'var(--p3)'},
+  4:{t:'Fase 4 — Remote input',         s:'Planlagt', c:'var(--p4)'},
+  5:{t:'Fase 5 — Security',             s:'Planlagt', c:'var(--p5)'},
+  6:{t:'Fase 6 — Community app',        s:'Vision',   c:'var(--p6)'}
+};
+function N(id,x,y,title,sub,kind,phase,desc,items){
+  return {id,x,y,title,sub,kind,phase,desc,items:items||[]};
+}
+
+/* ---------------- SCENE 1: FASER ---------------- */
+const S_phases = {
+  title:'Faser — hvad er bygget, og hvad kommer',
+  lanes:[
+    {y:62, h:108, phase:1},
+    {y:178,h:118, phase:2},
+    {y:304,h:96,  phase:3},
+    {y:408,h:96,  phase:4},
+    {y:512,h:96,  phase:5},
+    {y:616,h:104, phase:6}
+  ],
+  nodes:[
+    N('app', 300,84,'ScreenGrid.Client.App','WPF · UI komplet','app',1,
+      'Front-end (viewer + host-UI). Fase 1 leverer komplet UI: Share/Get-access, session-skal, settings, VideoSurface, tema og lokalisering.',
+      ['MainWindow shell + Home/Session/Settings views','CommunityToolkit.Mvvm view models','VideoSurface (genbrugelig)','.resx lokalisering']),
+    N('protocol',120,204,'ScreenGrid.Protocol','DTOs · wire-kontrakter','shared',2,
+      'Delt datalag: DTOs, protokol-limits og interfaces. Det ENESTE projekt som både client og server refererer.',
+      ['Message contracts (versioneret)','ProtocolLimits (max frame-størrelser)','Ingen adfærd der kræver platform']),
+    N('auth',370,204,'ScreenGrid.Auth.Server','Control plane · Pi 3','server',2,
+      'Directory/rendezvous, device-registrering og (fase 5) 2FA + session-grants. Kører på Raspberry Pi 3.',
+      ['Device registration + heartbeat','Resolve peer by ID + public key','Email/TOTP + session grants (Fase 5)','SQLite + Minimal API (linux-arm64)']),
+    N('hostagent',620,204,'ScreenGrid.Host.Agent','Windows-host','server',2,
+      'Windows-delen der svarer på indgående sessioner: capture + input + verifikation af grants.',
+      ['Registrerer host hos Auth.Server','Åbner P2P-session til controller','Starter capture/encode + input-injektion']),
+    N('transport',870,204,'ScreenGrid.Transport','QUIC · ICE · TURN/STUN','lib',2,
+      'Netværkslaget: QUIC-transport (TLS 1.3), ICE/STUN/TURN og kanal-multiplexing (control/video/input).',
+      ['QUIC (System.Net.Quic) + ALPN','ICE/STUN/TURN for NAT-traversal','Bounded kanaler + back-pressure']),
+    N('media',300,320,'ScreenGrid.Media','Capture + encode','lib',3,
+      'Skærmfangst og video-encoding samt decode/render-helpers. Desktop Duplication + hardware-encode.',
+      ['Windows Desktop Duplication capture','H.264/AV1 hardware-encode','Adaptiv bitrate + frame-pacing','Multi-monitor']),
+    N('remotecontrol',300,424,'ScreenGrid.RemoteControl','Input-injektion','lib',4,
+      'Mouse/keyboard/clipboard-injektion på host via SendInput.',
+      ['Mouse + keyboard events','Clipboard-sync','SendInput på host']),
+    N('crypto',300,528,'ScreenGrid.Crypto','E2EE · identitet','lib',5,
+      'Per-device identitetsnøgler (Ed25519) og end-to-end kryptering af media + input.',
+      ['Ed25519 device-keys (NSec)','AEAD: ChaCha20-Poly1305','Session-password / engangs-tokens']),
+    N('community',300,632,'Community / streaming app','Genbrug af Transport + Media','app',6,
+      'Fremtidig Discord-lignende app der genbruger Transport + Media til gruppe-streams.',
+      ['Gruppe-skærmsdeling','Presence + chat','Reuse af Transport + Media'])
+  ],
+  edges:[]
+};
+
+/* ---------------- SCENE 2: PROJEKTER & AFHÆNGIGHEDER ---------------- */
+const S_deps = {
+  title:'Projekter & afhængigheder — afhængigheder peger indad mod Protocol',
+  groups:[
+    {x:64,y:60,w:1112,h:120,label:'APPLIKATIONER  (må afhænge af bibliotekerne)'},
+    {x:64,y:300,w:1112,h:120,label:'GENBRUGELIGE BIBLIOTEKER  (må ikke afhænge af apps/WPF)'},
+    {x:64,y:560,w:1112,h:120,label:'DELT KONTRAKT  (refereret af både client og server)'}
+  ],
+  nodes:[
+    N('client',110,96,'ScreenGrid.Client.App','WPF viewer','app',1,
+      'WPF front-end. Afhænger af Transport, Media, Crypto og Protocol.',
+      ['Ingen netværks-/crypto-kode af sig selv','Bruger VideoSurface til render']),
+    N('host',500,96,'ScreenGrid.Host.Agent','Windows host','server',2,
+      'Windows host-agent. Afhænger af Transport, Media, RemoteControl, Crypto, Protocol.',
+      ['Capture + encode','Input-injektion','Grant-verifikation']),
+    N('auth',890,96,'ScreenGrid.Auth.Server','Control plane (Pi)','server',2,
+      'Server. Afhænger kun af Protocol — ingen media-biblioteker.',
+      ['Kører på linux-arm64','Ingen WPF-afhængigheder']),
+    N('transport',110,336,'ScreenGrid.Transport','QUIC · ICE · TURN','lib',2,
+      'Transportlag. Afhænger af Protocol + Crypto.',
+      ['QUIC/TLS 1.3','ICE/STUN/TURN']),
+    N('media',400,336,'ScreenGrid.Media','Capture + encode','lib',3,
+      'Media. Afhænger kun af Protocol.',
+      ['Desktop Duplication','Hardware-encode']),
+    N('remotecontrol',690,336,'ScreenGrid.RemoteControl','Input-injektion','lib',4,
+      'RemoteControl. Afhænger kun af Protocol.',
+      ['SendInput','Clipboard']),
+    N('crypto',980,336,'ScreenGrid.Crypto','E2EE · identitet','lib',5,
+      'Crypto. Afhænger af Protocol.',
+      ['Ed25519 + AEAD']),
+    N('protocol',514,596,'ScreenGrid.Protocol','DTOs · limits · interfaces','shared',2,
+      'Det absolutte bundlag. Refereres af alle — refererer ikke selv noget.',
+      ['Message contracts','ProtocolLimits','Ingen platform-adfærd'])
+  ],
+  edges:[
+    {f:'client',t:'transport',kind:'dep'},{f:'client',t:'media',kind:'dep'},
+    {f:'client',t:'crypto',kind:'dep'},{f:'client',t:'protocol',kind:'dep'},
+    {f:'host',t:'transport',kind:'dep'},{f:'host',t:'media',kind:'dep'},
+    {f:'host',t:'remotecontrol',kind:'dep'},{f:'host',t:'crypto',kind:'dep'},
+    {f:'host',t:'protocol',kind:'dep'},
+    {f:'auth',t:'protocol',kind:'dep'},
+    {f:'transport',t:'protocol',kind:'dep'},{f:'transport',t:'crypto',kind:'dep'},
+    {f:'media',t:'protocol',kind:'dep'},
+    {f:'remotecontrol',t:'protocol',kind:'dep'},
+    {f:'crypto',t:'protocol',kind:'dep'}
+  ]
+};
+
+/* ---------------- SCENE 3: DATAFLOW ---------------- */
+const S_dataflow = {
+  title:'Dataflow — capture → encode → transport → decode → render (+ input & control)',
+  notes:[
+    {x:20,y:92,t:'VIDEO-KANAL  (host → controller)'},
+    {x:20,y:312,t:'INPUT-KANAL  (controller → host)'},
+    {x:20,y:552,t:'CONTROL-KANAL  (via Auth.Server)'}
+  ],
+  nodes:[
+    N('capture',20,120,'Capture','Desktop Duplication','lib',3,'Fanger hostens skærmbillede (Windows Desktop Duplication API).',['GPU-textur → frame']),
+    N('encode',268,120,'Encode','H.264 / AV1','lib',3,'Hardware-accelereret videokomprimering med adaptiv bitrate.',['GFX-encode','Frame pacing']),
+    N('tmedia',516,120,'Transport · media','QUIC-stream · AEAD','lib',2,'Krypteret videostream. Bounded kanal → tab ældste frame ved overbelastning.',['QUIC stream','ChaCha20-Poly1305']),
+    N('decode',764,120,'Decode','HW-decode','lib',3,'Dekoder den modtagne video på controller-siden.',['GPU-decode']),
+    N('render',1012,120,'Render','VideoSurface','app',1,'Viser decoded frames i WPF via VideoSurface-kontrollen.',['VideoSurface','Frame → bitmap']),
+    N('input',268,340,'Controller-input','Mouse / tastatur','app',1,'Fanger brugerens input på controller-siden.',['SendInput-hook','Koordinat-map']),
+    N('tinput',516,340,'Transport · input','QUIC-stream · AEAD','lib',2,'Krypteret input-kanal (separat stream = blokeres ikke af video).',['Egen QUIC-stream']),
+    N('inject',764,340,'Inject','SendInput','lib',4,'Indsætter input i host-OS via RemoteControl-laget.',['Mouse','Keyboard','Clipboard']),
+    N('os',1012,340,'Host-OS','Windows','ext',4,'Operativsystemet på host — modtager de injicerede input-events.',[]),
+    N('sclient',140,580,'Client.App','Controller','app',1,'Controller-klienten. Beders om directory + grants og holder sessionen.',[]),
+    N('sauth',514,580,'Auth.Server','Pi · control plane','server',2,'Directory, godkendelse og signering af session-grants. Rører ALDRIG media.',[]),
+    N('shost',888,580,'Host.Agent','Windows host','server',2,'Registrerer sig, verificerer grant og starter capture/input.',[])
+  ],
+  edges:[
+    {f:'capture',t:'encode',kind:'data'},{f:'encode',t:'tmedia',kind:'data'},
+    {f:'tmedia',t:'decode',kind:'data'},{f:'decode',t:'render',kind:'data'},
+    {f:'input',t:'tinput',kind:'data'},{f:'tinput',t:'inject',kind:'data'},
+    {f:'inject',t:'os',kind:'data'},
+    {f:'sclient',t:'sauth',kind:'control'},{f:'sauth',t:'shost',kind:'control'}
+  ]
+};
+
+/* ---------------- SCENE 4: RUNTIME-TOPOLOGI ---------------- */
+function NB(id,x,y,w,h,title,sub,kind,phase,desc,items){
+  return {id,x,y,w,h,title,sub,kind,phase,desc,items:items||[]};
+}
+const S_runtime = {
+  title:'Runtime-topologi — hvor tingene kører, og hvordan de taler sammen',
+  notes:[{x:150,y:640,t:'Vigtigt: media & input går P2P og passerer ALDRIG Raspberry Pi’en.'}],
+  nodes:[
+    NB('winclient',80,180,330,120,'Windows · Client','Controller / viewer','app',1,
+      'Controller-maskinen. Kører WPF-klienten (viewer).',['Fase 1 UI (findes)','Decoder + VideoSurface']),
+    NB('winhost',830,180,330,120,'Windows · Host','Screen capture + input','server',2,
+      'Host-maskinen. Kører Host.Agent: capture, encode og input-injektion.',['Host.Agent','Capture + encode','SendInput']),
+    NB('pi',455,500,330,140,'Raspberry Pi 3','Auth.Server · control plane','server',2,
+      'Trust-roden. Directory, 2FA og session-grants. Let (RMS < 200 MB), ingen media.',
+      ['Directory / rendezvous','Device-registrering','(Fase 5) grants + 2FA'])
+  ],
+  edges:[
+    {f:'winclient',t:'winhost',kind:'data',label:'P2P · QUIC · media + input'},
+    {f:'winclient',t:'pi',kind:'control',dashed:true,label:'HTTPS · register/resolve'},
+    {f:'winhost',t:'pi',kind:'control',dashed:true,label:'HTTPS · register/heartbeat'}
+  ]
+};
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+const SCENES = { phases:S_phases, deps:S_deps, dataflow:S_dataflow, runtime:S_runtime };
+const svg = document.getElementById('graph');
+const details = document.getElementById('details');
+const vb = {x:0,y:0,w:1240,h:780};
+const BASE = {w:1240,h:780};
+let current = 'phases';
+let selectedId = null;
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function wh(n){ return {w:n.w||NW, h:n.h||NH}; }
+function defs(){
+  return '<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" '
+       + 'markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
+       + '<path d="M0 0 L10 5 L0 10 z" fill="#8b949e"></path></marker></defs>';
+}
+function anchors(a,b){
+  const A=wh(a),B=wh(b);
+  const ac={x:a.x+A.w/2,y:a.y+A.h/2}, bc={x:b.x+B.w/2,y:b.y+B.h/2};
+  const dx=bc.x-ac.x, dy=bc.y-ac.y;
+  if(Math.abs(dy)>=Math.abs(dx)*0.6){
+    return dy>0 ? {x1:ac.x,y1:a.y+A.h,x2:bc.x,y2:b.y}
+                : {x1:ac.x,y1:a.y,x2:bc.x,y2:b.y+B.h};
+  }
+  return dx>0 ? {x1:a.x+A.w,y1:ac.y,x2:b.x,y2:bc.y}
+              : {x1:a.x,y1:ac.y,x2:b.x+B.w,y2:bc.y};
+}
+function pathFor(A,B){
+  const a=anchors(A,B);
+  const vertical=Math.abs(a.y2-a.y1)>Math.abs(a.x2-a.x1);
+  if(vertical){
+    const my=(a.y1+a.y2)/2;
+    return `M${a.x1} ${a.y1} C ${a.x1} ${my}, ${a.x2} ${my}, ${a.x2} ${a.y2}`;
+  }
+  const mx=(a.x1+a.x2)/2;
+  return `M${a.x1} ${a.y1} C ${mx} ${a.y1}, ${mx} ${a.y2}, ${a.x2} ${a.y2}`;
+}
+function laneLabel(L){
+  const p=PHASES[L.phase]||{t:''};
+  const sub=p.t.includes('—')?p.t.split('—')[1].trim():p.t;
+  return `<rect x="16" y="${L.y}" width="6" height="${L.h}" rx="3" fill="${p.c}"></rect>`
+       + `<text class="lane-label" x="34" y="${L.y+30}">FASE ${L.phase}</text>`
+       + `<text class="flow-note" x="34" y="${L.y+50}">${esc(sub)}</text>`
+       + `<text class="flow-note" x="34" y="${L.y+L.h-18}">${esc(p.s)}</text>`;
+}
+function nodeSvg(n){
+  const {w,h}=wh(n);
+  const cls=['node','k-'+n.kind];
+  if(n.phase) cls.push('p'+n.phase);
+  if(n.id===selectedId) cls.push('selected');
+  const big=h>82;
+  const ty=big?h/2-4:30, sy=big?h/2+20:50;
+  let s=`<g class="${cls.join(' ')}" data-id="${n.id}" transform="translate(${n.x},${n.y})">`;
+  s+=`<rect class="box" width="${w}" height="${h}" rx="12"></rect>`;
+  if(n.phase){
+    s+=`<circle class="pcirc" cx="${w-20}" cy="20" r="11"></circle>`;
+    s+=`<text class="pnum" x="${w-20}" y="20">${n.phase}</text>`;
+  }
+  s+=`<text class="t" x="16" y="${ty}">${esc(n.title)}</text>`;
+  s+=`<text class="s" x="16" y="${sy}">${esc(n.sub)}</text>`;
+  s+=`</g>`;
+  return s;
+}
+function applyView(){
+  svg.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+}
+function render(key){
+  current=key;
+  const sc=SCENES[key];
+  const byId={};
+  sc.nodes.forEach(n=>byId[n.id]=n);
+  let s=defs();
+  s+=`<text class="scene-title" x="24" y="30">${esc(sc.title)}</text>`;
+  (sc.lanes||[]).forEach(L=>{
+    s+=`<rect class="lane" x="16" y="${L.y}" width="1208" height="${L.h}" rx="10"></rect>`;
+    s+=laneLabel(L);
+  });
+  (sc.groups||[]).forEach(g=>{
+    s+=`<rect class="group-box" x="${g.x}" y="${g.y}" width="${g.w}" height="${g.h}" rx="12"></rect>`;
+    s+=`<text class="group-label" x="${g.x+14}" y="${g.y-8}">${esc(g.label)}</text>`;
+  });
+  sc.edges.forEach(e=>{
+    const A=byId[e.f],B=byId[e.t];
+    if(!A||!B) return;
+    const cls=['edge',e.kind||'dep']; if(e.dashed) cls.push('dashed');
+    s+=`<path class="${cls.join(' ')}" data-f="${e.f}" data-t="${e.t}" d="${pathFor(A,B)}" marker-end="url(#arrow)"></path>`;
+    if(e.label){
+      const A2=wh(A),B2=wh(B);
+      const mx=(A.x+A2.w/2+B.x+B2.w/2)/2, my=(A.y+A2.h/2+B.y+B2.h/2)/2;
+      s+=`<text class="flow-note" text-anchor="middle" x="${mx}" y="${my-8}">${esc(e.label)}</text>`;
+    }
+  });
+  sc.nodes.forEach(n=>s+=nodeSvg(n));
+  (sc.notes||[]).forEach(t=>s+=`<text class="scene-title" x="${t.x}" y="${t.y}">${esc(t.t)}</text>`);
+  svg.innerHTML=s;
+  applyView();
+  svg.querySelectorAll('.node').forEach(g=>{
+    g.addEventListener('mouseenter',()=>highlight(g.dataset.id));
+    g.addEventListener('mouseleave',()=>highlight(null));
+    g.addEventListener('click',ev=>{ ev.stopPropagation(); select(g.dataset.id); });
+  });
+  document.querySelectorAll('nav.tabs button').forEach(b=>
+    b.classList.toggle('active', b.dataset.scene===key));
+}
+
+/* ---------------- INTERAKTION ---------------- */
+function highlight(id){
+  const nodes=svg.querySelectorAll('.node'), edges=svg.querySelectorAll('.edge');
+  if(!id){
+    nodes.forEach(x=>x.classList.remove('dim'));
+    edges.forEach(x=>x.classList.remove('dim','hot'));
+    return;
+  }
+  nodes.forEach(x=>x.classList.toggle('dim', x.dataset.id!==id));
+  edges.forEach(e=>{
+    const on=(e.dataset.f===id || e.dataset.t===id);
+    e.classList.toggle('dim',!on);
+    e.classList.toggle('hot',on);
+  });
+}
+function renderDetails(n){
+  const items=(n.items||[]).map(i=>`<li>${esc(i)}</li>`).join('');
+  const badge=n.phase
+    ? `<span class="badge" style="background:${PHASES[n.phase].c};color:#06131f">${esc(PHASES[n.phase].t)}</span>`
+    : '';
+  details.innerHTML=
+    `<div class="kind">${esc(KIND[n.kind]||'Node')}</div>`
+    + `<h3>${esc(n.title)}</h3>`
+    + `<p>${esc(n.desc||'')}</p>`
+    + (items?`<ul>${items}</ul>`:'')
+    + badge;
+}
+function select(id){
+  selectedId=id;
+  svg.querySelectorAll('.node').forEach(g=>g.classList.toggle('selected', g.dataset.id===id));
+  if(!id){
+    details.innerHTML='<div class="kind">Vælg en node</div><h3>ScreenGrid arkitektur</h3>'
+      + '<p>Klik på en node for at se ansvar, fase og afhængigheder.</p>';
+    return;
+  }
+  const sc=SCENES[current];
+  const n=(sc.nodes||[]).find(x=>x.id===id);
+  if(n) renderDetails(n);
+}
+function buildLegend(){
+  const items=[
+    ['Applikation','var(--app)'],['Server','var(--server)'],['Bibliotek','var(--lib)'],
+    ['Delt kontrakt','var(--shared)'],['Ekstern / OS','var(--ext)'],
+    ['Afhængighed','#57606a'],['Data','var(--app)'],['Control','var(--server)']
+  ];
+  document.getElementById('legend').innerHTML =
+    items.map(([t,c])=>`<span><i style="background:${c}"></i>${t}</span>`).join('');
+}
+
+/* ---------------- VIEWPORT (zoom + pan) ---------------- */
+svg.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const r=svg.getBoundingClientRect();
+  const mx=(e.clientX-r.left)/r.width, my=(e.clientY-r.top)/r.height;
+  const px=vb.x+mx*vb.w, py=vb.y+my*vb.h;
+  const k=e.deltaY<0?0.88:1.12;
+  const nw=Math.max(360, Math.min(BASE.w*3, vb.w*k));
+  const nh=nw*(BASE.h/BASE.w);
+  vb.x=px-mx*nw; vb.y=py-my*nh; vb.w=nw; vb.h=nh;
+  applyView();
+},{passive:false});
+
+let drag=null;
+svg.addEventListener('mousedown',e=>{
+  if(e.button!==0) return;
+  drag={x:e.clientX,y:e.clientY,vx:vb.x,vy:vb.y};
+  svg.classList.add('panning');
+});
+window.addEventListener('mousemove',e=>{
+  if(!drag) return;
+  const r=svg.getBoundingClientRect();
+  vb.x=drag.vx-(e.clientX-drag.x)/r.width*vb.w;
+  vb.y=drag.vy-(e.clientY-drag.y)/r.height*vb.h;
+  applyView();
+});
+window.addEventListener('mouseup',()=>{ drag=null; svg.classList.remove('panning'); });
+svg.addEventListener('dblclick',()=>{ vb.x=0; vb.y=0; vb.w=BASE.w; vb.h=BASE.h; applyView(); });
+
+/* ---------------- INIT ---------------- */
+svg.addEventListener('click',()=>select(null));
+document.querySelectorAll('nav.tabs button').forEach(b=>
+  b.addEventListener('click',()=>{ select(null); render(b.dataset.scene); }));
+buildLegend();
+render('phases');
+</script>
+</body>
+</html>

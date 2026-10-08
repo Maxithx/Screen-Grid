@@ -44,6 +44,7 @@ docs/
   ARCHITECTURE.md                     Project layout & coding rules
   PROTOCOL.md                         Handshake & connection protocol design
   RELIABILITY.md                      Memory / resource-safety rules
+  architecture-map.html               Interactive architecture node map
   UI.md                               Phase 1 UI documentation
   ROADMAP.md                          Phase plan
   AUTH-SERVER.md                      Auth & approval service design
@@ -66,6 +67,8 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 
 ## Documentation
 
+* [`docs/architecture-map.html`](docs/architecture-map.html) — **interactive node map** (phases, dependencies,
+  dataflow, runtime topology). Open it in a browser — no server or build needed.
 * [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — project layout & coding rules (module + file-size budget).
 * [`docs/PROTOCOL.md`](docs/PROTOCOL.md) — connection handshake & session protocol design.
 * [`docs/RELIABILITY.md`](docs/RELIABILITY.md) — memory / resource-safety and DoS rules.
