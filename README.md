@@ -42,6 +42,8 @@ src/
     Resources/Brand.xaml              Brand palette + shared styles
 docs/
   ARCHITECTURE.md                     Project layout & coding rules
+  PROTOCOL.md                         Handshake & connection protocol design
+  RELIABILITY.md                      Memory / resource-safety rules
   UI.md                               Phase 1 UI documentation
   ROADMAP.md                          Phase plan
   AUTH-SERVER.md                      Auth & approval service design
@@ -65,6 +67,8 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 ## Documentation
 
 * [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — project layout & coding rules (module + file-size budget).
+* [`docs/PROTOCOL.md`](docs/PROTOCOL.md) — connection handshake & session protocol design.
+* [`docs/RELIABILITY.md`](docs/RELIABILITY.md) — memory / resource-safety and DoS rules.
 * [`docs/UI.md`](docs/UI.md) — what Phase 1 looks like and how to extend it.
 * [`docs/ROADMAP.md`](docs/ROADMAP.md) — the phased delivery plan.
 * [`docs/AUTH-SERVER.md`](docs/AUTH-SERVER.md) — the 2FA approval service design.

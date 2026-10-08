@@ -127,6 +127,8 @@ Recommended (add in Phase 2 CI):
 | --------------------- | ------------------------------------------ |
 | `README.md`           | Project overview + build instructions      |
 | `docs/ARCHITECTURE.md`| This file — structure & coding rules       |
+| `docs/PROTOCOL.md`    | Handshake & connection protocol design      |
+| `docs/RELIABILITY.md` | Memory / resource-safety & DoS rules       |
 | `docs/ROADMAP.md`     | Phase plan                                 |
 | `docs/UI.md`          | Phase-1 UI reference                       |
 | `docs/AUTH-SERVER.md` | Auth / approval control-plane design       |
