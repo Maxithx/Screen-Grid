@@ -42,6 +42,19 @@ power-loss safety and keeping data off the boot card are.**
   supported* matrix. Debian 12 "Bookworm" still runs (glibc 2.36 > the required
   2.27) but is no longer tested or supported by Microsoft for .NET 10.
 
+> **Do not pick an arbitrary Linux.** The Pi 3 is ARM, so the image must be
+> **`arm64`**. Desktop-oriented x86 distributions publish no ARM build at all and
+> simply cannot be installed here — *Linux Lite*, for example, is a desktop distro
+> for old PCs, not a Raspberry Pi system. Check that a distribution ships an
+> `arm64` image before considering it.
+
+Alternatives, if you would rather not use Raspberry Pi OS:
+
+| Option                          | Note                                                                                                                            |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Debian 13 `arm64`** (netinst) | Same base, without the Raspberry Pi tooling. Everything in §5 must be done by hand.                                             |
+| **Ubuntu Server LTS `arm64`**   | Officially supported by .NET 10, but the Pi 3 is **not** on Canonical's certified list (only Pi 4B / 400 / CM4 / 5 / Zero 2 W) and it is heavier on 1 GB of RAM. |
+
 Confirm the architecture:
 
 ```bash
