@@ -30,6 +30,8 @@ Discord-style community/streaming application, not just remote control.
 ```
 ScreenGrid.slnx                       Solution (new XML format)
 Directory.Build.props                 Shared build properties
+LICENSE                               PolyForm Noncommercial 1.0.0
+THIRD-PARTY-NOTICES.md                Licenses of the components we depend on
 src/
   ScreenGrid.Client.App/              WPF front-end (viewer + host UI)
     App.xaml(.cs)                     Application + theme dictionaries
@@ -43,11 +45,15 @@ src/
 docs/
   ARCHITECTURE.md                     Project layout & coding rules
   PROTOCOL.md                         Handshake & connection protocol design
+  TRANSPORT.md                        QUIC / TLS 1.3 explained (what & why)
   RELIABILITY.md                      Memory / resource-safety rules
+  AUTH-SERVER.md                      Auth & approval service design
   architecture-map.html               Interactive architecture node map
+  documentation.html                  Browsable documentation hub — GENERATED
   UI.md                               Phase 1 UI documentation
   ROADMAP.md                          Phase plan
-  AUTH-SERVER.md                      Auth & approval service design
+tools/
+  build-docs.mjs                      Generates docs/documentation.html from the markdown
 ```
 
 Later phases add `Host.Agent`, `Signaling.Server` and the reusable
@@ -67,8 +73,11 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 
 ## Documentation
 
+* [`docs/documentation.html`](docs/documentation.html) — **browsable documentation hub** with a
+  table of contents. **Generated** from the markdown below — open it in a browser.
 * [`docs/architecture-map.html`](docs/architecture-map.html) — **interactive node map** (phases, dependencies,
   dataflow, runtime topology). Open it in a browser — no server or build needed.
+* [`docs/TRANSPORT.md`](docs/TRANSPORT.md) — **QUIC / TLS 1.3** explained: what it is, what it gives us, deployment.
 * [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — project layout & coding rules (module + file-size budget).
 * [`docs/PROTOCOL.md`](docs/PROTOCOL.md) — connection handshake & session protocol design.
 * [`docs/RELIABILITY.md`](docs/RELIABILITY.md) — memory / resource-safety and DoS rules.
@@ -76,7 +85,35 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 * [`docs/ROADMAP.md`](docs/ROADMAP.md) — the phased delivery plan.
 * [`docs/AUTH-SERVER.md`](docs/AUTH-SERVER.md) — the 2FA approval service design.
 
+### Regenerating the HTML documentation
+
+The markdown files above are the **single source of truth**; `docs/documentation.html`
+is a build product and must never be edited by hand.
+
+```powershell
+node tools/build-docs.mjs           # regenerate docs/documentation.html
+node tools/build-docs.mjs --check   # verify it is up to date (CI does this)
+```
+
+Requires Node.js. `docs/architecture-map.html` is **not** generated — it is a
+hand-authored, self-contained interactive diagram.
+
 ## License
 
-ScreenGrid is released under **AGPL-3.0-or-later** — see [`LICENSE`](LICENSE).
-ScreenGrid links against **WPF-UI**, which is MIT licensed.
+ScreenGrid is **source-available** under the **PolyForm Noncommercial License
+1.0.0** — see [`LICENSE`](LICENSE).
+
+* ✅ **Free** for personal use, hobby projects, study, research, and use by
+  charities, educational institutions, public research / public safety / health /
+  environmental organizations and government bodies.
+* ❌ **Commercial use and commercial redistribution require a separate license.**
+
+Third-party components keep their own licenses — see
+[`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). ScreenGrid links against
+**WPF-UI** and **CommunityToolkit.Mvvm**, both MIT licensed.
+
+> **Note:** versions released before this change were licensed under
+> AGPL-3.0-or-later. That grant is irrevocable for those versions; the PolyForm
+> terms apply going forward.
+
+For commercial licensing, contact the maintainer.
