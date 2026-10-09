@@ -48,6 +48,7 @@ docs/
   TRANSPORT.md                        QUIC / TLS 1.3 explained (what & why)
   RELIABILITY.md                      Memory / resource-safety rules
   AUTH-SERVER.md                      Auth & approval service design
+  HOSTING-PI.md                       Deploying the Auth.Server on a Raspberry Pi
   architecture-map.html               Interactive architecture node map
   documentation.html                  Browsable documentation hub — GENERATED
   UI.md                               Phase 1 UI documentation
@@ -84,6 +85,7 @@ Requirements: Windows 10/11 and the .NET 10 SDK.
 * [`docs/UI.md`](docs/UI.md) — what Phase 1 looks like and how to extend it.
 * [`docs/ROADMAP.md`](docs/ROADMAP.md) — the phased delivery plan.
 * [`docs/AUTH-SERVER.md`](docs/AUTH-SERVER.md) — the 2FA approval service design.
+* [`docs/HOSTING-PI.md`](docs/HOSTING-PI.md) — hosting the Auth.Server on a Raspberry Pi 3.
 
 ### Regenerating the HTML documentation
 

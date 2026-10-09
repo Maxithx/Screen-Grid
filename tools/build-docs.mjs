@@ -13,12 +13,16 @@
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { dirname, resolve, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = resolve(ROOT, 'docs/documentation.html');
+const OUT_DIR = dirname(OUT);
 const CHECK_ONLY = process.argv.includes('--check');
+
+/** Directory of the markdown file currently being parsed (for link rebasing). */
+let SRC_DIR = ROOT;
 
 /** Which markdown files become sections of the page, in reading order. */
 const DOCS = [
@@ -28,6 +32,7 @@ const DOCS = [
   { id: 'protokol',    file: 'docs/PROTOCOL.md' },
   { id: 'reliability', file: 'docs/RELIABILITY.md' },
   { id: 'auth-server', file: 'docs/AUTH-SERVER.md' },
+  { id: 'hosting-pi',  file: 'docs/HOSTING-PI.md' },
   { id: 'ui',          file: 'docs/UI.md' },
   { id: 'roadmap',     file: 'docs/ROADMAP.md' }
 ];
@@ -49,17 +54,21 @@ const BY_NAME = new Map(DOCS.map((d) => [d.file.split('/').pop().toLowerCase(), 
 
 function resolveLink(href) {
   if (/^(https?:|mailto:|#|data:)/i.test(href)) return href;
+
   const path = href.split('#')[0];
   const name = path.split('/').pop().toLowerCase();
 
-  if (name === 'documentation.html') return 'documentation.html';
-  if (name === 'architecture-map.html') return 'architecture-map.html';
-  if (name === 'license') return '../LICENSE';
-
+  // A markdown file we render in full -> jump to its section on this page.
   const doc = BY_NAME.get(name);
-  if (doc) return `#${doc.id}`;      // we don't preserve the source fragment
+  if (doc) return `#${doc.id}`;
 
-  return href;                        // unknown: leave the relative link alone
+  // Anything else: resolve against the real file and rebase it onto the output
+  // directory, so links to repo-root files (LICENSE, README.md, ...) stay valid
+  // when the page is opened from docs/.
+  const abs = resolve(SRC_DIR, path);
+  if (existsSync(abs)) return relative(OUT_DIR, abs).split(sep).join('/');
+
+  return href; // unknown target: leave the author's relative link alone
 }
 
 /** Inline formatting: html-escape, then code spans, links, bold, italic. */
@@ -279,7 +288,8 @@ function parseList(lines, start, prefix) {
 }
 
 /** Turn one markdown file into { title, html, toc }. The leading H1 becomes the title. */
-function markdownToDoc(raw, docId) {
+function markdownToDoc(raw, docId, filePath) {
+  SRC_DIR = dirname(filePath);
   const lines = raw.replace(/\r\n?/g, '\n').split('\n');
   let title = docId;
   let start = 0;
@@ -394,7 +404,7 @@ function renderPage(sections) {
   }).join('');
 
   const bodyHtml = sections.map((s) => {
-    const src = s.doc.file.replace(/^docs\//, '');
+    const src = s.doc.sourceRel;
     return `<section class="doc" id="${s.doc.id}">
       <h1 class="doc-title">${inlinePlain(s.doc.title)}</h1>
       <p class="doc-source">Kilde: <a class="inline" href="${src}">${src}</a></p>
@@ -491,8 +501,12 @@ function build() {
       process.exitCode = 1;
       return null;
     }
-    const parsed = markdownToDoc(readFileSync(file, 'utf8'), doc.id);
-    sections.push({ doc: { ...doc, title: parsed.title, html: parsed.html }, toc: parsed.toc });
+    const parsed = markdownToDoc(readFileSync(file, 'utf8'), doc.id, file);
+    const sourceRel = relative(OUT_DIR, file).split(sep).join('/');
+    sections.push({
+      doc: { ...doc, title: parsed.title, html: parsed.html, sourceRel },
+      toc: parsed.toc
+    });
   }
 
   return renderPage(sections);

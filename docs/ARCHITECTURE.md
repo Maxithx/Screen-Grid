@@ -136,3 +136,4 @@ Recommended (add in Phase 2 CI):
 | `docs/ROADMAP.md`     | Phase plan                                 |
 | `docs/UI.md`          | Phase-1 UI reference                       |
 | `docs/AUTH-SERVER.md` | Auth / approval control-plane design       |
+| `docs/HOSTING-PI.md`  | Raspberry Pi hosting & deployment guide     |
