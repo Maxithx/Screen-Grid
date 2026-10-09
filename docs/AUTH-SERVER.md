@@ -218,7 +218,9 @@ The service is introduced across two phases rather than as new ones:
    approval enough for v1? (Email is chosen as the *account-login* factor; it is
    too slow for per-session approval.)
 2. Is the Pi reachable from the internet (port-forward) or should it sit behind
-   a tunnel (Tailscale / Cloudflare Tunnel)?
+   a tunnel (Tailscale / Cloudflare Tunnel)? — the same choice drives the v1
+   remote path for media, see [`PROTOCOL.md §8 D2`](PROTOCOL.md) (overlay tunnel
+   for v1; STUN/ICE in v2, TURN in v3).
 3. Which **email provider** do we standardise on for sending codes (deliverability
    from a home connection is the main risk)?
 4. Should accounts be optional (device-ID only, no email) to keep friction low,

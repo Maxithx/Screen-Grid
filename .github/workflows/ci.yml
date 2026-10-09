@@ -16,6 +16,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # docs/documentation.html is generated from the markdown sources.
+      # This fails if someone edited the HTML by hand or forgot to regenerate.
+      - name: Docs up to date
+        shell: pwsh
+        run: node tools/build-docs.mjs --check
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:

@@ -1,0 +1,583 @@
+<!doctype html>
+<!-- ============================================================
+     GENERERET FIL — REDIGER IKKE DIREKTE.
+     Kilden er markdown-filerne i docs/ (+ README.md).
+     Regenerér med:  node tools/build-docs.mjs
+     ============================================================ -->
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ScreenGrid · Dokumentation</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#0a0e14; --panel:#161b22; --panel2:#1c2230;
+    --border:#30363d; --border2:#3d444d; --text:#e6edf3; --muted:#8b949e;
+    --accent:#58a6ff; --app:#1f6feb; --server:#8957e5;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:86px}
+  body{
+    margin:0; font-family:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 700px at 20% -10%,#131a24 0%,var(--bg) 55%,var(--bg2) 100%);
+    background-attachment:fixed; color:var(--text); line-height:1.65;
+  }
+  header{
+    position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:20px;
+    flex-wrap:wrap; padding:12px 24px; border-bottom:1px solid var(--border);
+    background:rgba(13,17,23,.82); backdrop-filter:blur(12px);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:600; font-size:15px}
+  .brand .dot{width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,var(--app),var(--server))}
+  .brand small{color:var(--muted);font-weight:400;margin-left:6px}
+  nav.tabs{display:flex; gap:6px; flex-wrap:wrap; margin-left:auto}
+  nav.tabs a{
+    display:inline-block; background:var(--panel); color:var(--muted); border:1px solid var(--border);
+    padding:7px 14px; border-radius:999px; font-size:13px; font-weight:500;
+    text-decoration:none; transition:.15s;
+  }
+  nav.tabs a:hover{color:var(--text); border-color:var(--border2)}
+  nav.tabs a.active{background:var(--accent); color:#06131f; border-color:var(--accent); font-weight:600}
+  .layout{display:flex; align-items:flex-start; gap:26px; max-width:1400px; margin:0 auto; padding:28px 24px 80px}
+  nav#toc{
+    position:sticky; top:86px; flex:0 0 280px; width:280px; font-size:12.5px;
+    border-right:1px solid var(--border); padding-right:16px;
+    max-height:calc(100vh - 110px); overflow:auto;
+  }
+  nav#toc .toc-title{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px}
+  nav#toc a{display:block; color:var(--muted); text-decoration:none; padding:3px 0 3px 10px;
+            border-left:2px solid transparent; transition:.15s; line-height:1.4}
+  nav#toc a:hover{color:var(--text)}
+  nav#toc a.active{color:var(--accent); border-left-color:var(--accent); font-weight:600}
+  nav#toc a.lvl0{margin-top:12px; color:var(--text); font-weight:600; font-size:13px}
+  nav#toc a.lvl2{padding-left:22px; font-size:12px}
+  .toc-note{margin-top:16px; font-size:11px; color:var(--muted); line-height:1.5;
+            border-top:1px solid var(--border); padding-top:12px}
+  main#content{flex:1; min-width:0; max-width:920px}
+  .doc{padding:6px 0 34px; border-bottom:1px solid rgba(48,54,61,.5); scroll-margin-top:86px}
+  .doc:last-child{border-bottom:0}
+  .doc-source{font-size:11.5px; color:var(--muted); margin:0 0 14px}
+  h1.doc-title{font-size:26px; margin:0 0 4px; scroll-margin-top:86px}
+  h2{font-size:19px; margin:26px 0 10px; scroll-margin-top:86px}
+  h3{font-size:15.5px; margin:20px 0 8px; color:#c9d1d9; scroll-margin-top:86px}
+  h4,h5,h6{font-size:14px; margin:16px 0 6px; color:#c9d1d9}
+  p{margin:10px 0; font-size:14px; color:#c9d1d9}
+  ul,ol{margin:10px 0; padding-left:22px; font-size:14px; color:#c9d1d9}
+  li{margin:4px 0}
+  li>ul,li>ol{margin:6px 0}
+  li.task{list-style:none; margin-left:-20px}
+  li.task .checkbox{color:var(--accent); font-weight:700; margin-right:6px}
+  li.task.done{color:var(--muted); text-decoration:line-through}
+  hr{border:0; border-top:1px solid rgba(48,54,61,.7); margin:24px 0}
+  code{font-family:"Cascadia Code","Consolas",monospace; font-size:12.5px;
+       background:var(--panel2); border:1px solid var(--border); border-radius:5px;
+       padding:1px 5px; color:#d2a8ff}
+  pre{background:var(--panel); border:1px solid var(--border); border-radius:10px;
+      padding:14px 16px; overflow:auto; font-size:12.5px; line-height:1.6}
+  pre code{background:none; border:0; padding:0; color:#c9d1d9; font-size:12.5px}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.05em}
+  tr:hover td{background:rgba(88,166,255,.045)}
+  blockquote.callout{border:1px solid var(--border2); border-left:3px solid var(--accent);
+    background:var(--panel); border-radius:0 10px 10px 0; padding:4px 16px; margin:16px 0}
+  blockquote.callout p{font-size:13.5px}
+  blockquote.callout p:first-child{margin-top:10px}
+  blockquote.callout p:last-child{margin-bottom:10px}
+  a.inline{color:var(--accent); text-decoration:none}
+  a.inline:hover{text-decoration:underline}
+  .generated{margin:0 auto; max-width:1400px; padding:10px 24px 0; font-size:11.5px; color:var(--muted)}
+  .generated code{font-size:11px}
+  @media (max-width:1000px){
+    nav#toc{display:none}
+    .layout{padding:20px 16px 60px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span>ScreenGrid<small>· dokumentation</small></div>
+  <nav class="tabs">
+    <a class="active" href="documentation.html">Dokumentation</a>
+    <a href="architecture-map.html">Arkitektur-kort ↗</a>
+    <a href="https://github.com/Maxithx/Screen-Grid" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+
+<div class="generated">
+  Genereret fra markdown af <code>tools/build-docs.mjs</code> — redigér <code>docs/*.md</code>,
+  ikke denne fil.
+</div>
+
+<div class="layout">
+  <nav id="toc">
+    <div class="toc-title">Indhold</div>
+<a class="lvl0" href="#oversigt">ScreenGrid</a><a class="lvl2" href="#oversigt-why">Why</a><a class="lvl2" href="#oversigt-technology">Technology</a><a class="lvl2" href="#oversigt-repository-layout">Repository layout</a><a class="lvl2" href="#oversigt-building-running">Building &amp; running</a><a class="lvl2" href="#oversigt-documentation">Documentation</a><a class="lvl2" href="#oversigt-license">License</a><a class="lvl0" href="#arkitektur">ScreenGrid — Architecture &amp; coding guidelines</a><a class="lvl2" href="#arkitektur-1-guiding-principles">1. Guiding principles</a><a class="lvl2" href="#arkitektur-2-file-size-budget-the-1000-line-rule">2. File-size budget (the &quot;1000-line rule&quot;)</a><a class="lvl2" href="#arkitektur-3-project-layout-planned">3. Project layout (planned)</a><a class="lvl2" href="#arkitektur-4-folder-conventions-inside-a-component">4. Folder conventions inside a component</a><a class="lvl2" href="#arkitektur-5-c-coding-conventions">5. C# coding conventions</a><a class="lvl2" href="#arkitektur-6-line-count-quality-checks">6. Line-count / quality checks</a><a class="lvl2" href="#arkitektur-7-documentation-map">7. Documentation map</a><a class="lvl0" href="#transport">ScreenGrid — Transport &amp; cryptography: QUIC / TLS 1.3</a><a class="lvl2" href="#transport-1-in-one-paragraph">1. In one paragraph</a><a class="lvl2" href="#transport-2-what-is-quic">2. What is QUIC?</a><a class="lvl2" href="#transport-3-what-is-tls-1-3">3. What is TLS 1.3?</a><a class="lvl2" href="#transport-4-why-quic-for-a-remote-desktop">4. Why QUIC for a remote desktop?</a><a class="lvl2" href="#transport-5-what-quic-does-not-do-nat-traversal">5. What QUIC does not do: NAT traversal</a><a class="lvl2" href="#transport-6-how-screengrid-uses-quic">6. How ScreenGrid uses QUIC</a><a class="lvl2" href="#transport-7-deployment-facts-why-this-is-cheap-for-us">7. Deployment facts (why this is cheap for us)</a><a class="lvl2" href="#transport-8-alternatives-we-rejected">8. Alternatives we rejected</a><a class="lvl2" href="#transport-9-glossary">9. Glossary</a><a class="lvl2" href="#transport-10-references">10. References</a><a class="lvl0" href="#protokol">ScreenGrid — Connection protocol (handshake &amp; session design)</a><a class="lvl2" href="#protokol-1-why-this-document-exists">1. Why this document exists</a><a class="lvl2" href="#protokol-2-principles">2. Principles</a><a class="lvl2" href="#protokol-3-transport-handshake-building-blocks">3. Transport &amp; handshake building blocks</a><a class="lvl2" href="#protokol-4-connection-phases">4. Connection phases</a><a class="lvl2" href="#protokol-5-replay-freshness-downgrade-protection">5. Replay, freshness &amp; downgrade protection</a><a class="lvl2" href="#protokol-6-message-framing-limits">6. Message framing &amp; limits</a><a class="lvl2" href="#protokol-7-failure-handling">7. Failure handling</a><a class="lvl2" href="#protokol-8-decisions">8. Decisions</a><a class="lvl2" href="#protokol-9-remaining-open-questions">9. Remaining open questions</a><a class="lvl0" href="#reliability">ScreenGrid — Reliability &amp; resource safety (memory, CPU, DoS)</a><a class="lvl2" href="#reliability-1-why-this-document-exists">1. Why this document exists</a><a class="lvl2" href="#reliability-2-threat-model">2. Threat model</a><a class="lvl2" href="#reliability-3-hard-invariants-the-rules">3. Hard invariants (the rules)</a><a class="lvl2" href="#reliability-4-resource-budgets">4. Resource budgets</a><a class="lvl2" href="#reliability-5-verification">5. Verification</a><a class="lvl2" href="#reliability-6-review-checklist">6. Review checklist</a><a class="lvl0" href="#auth-server">ScreenGrid — Auth &amp; Approval Service (design proposal)</a><a class="lvl2" href="#auth-server-1-purpose">1. Purpose</a><a class="lvl2" href="#auth-server-2-why-a-raspberry-pi-3-is-a-good-host">2. Why a Raspberry Pi 3 is a good host</a><a class="lvl2" href="#auth-server-3-roles">3. Roles</a><a class="lvl2" href="#auth-server-4-component-protocol-overview">4. Component &amp; protocol overview</a><a class="lvl2" href="#auth-server-5-authentication-approval-flows">5. Authentication &amp; approval flows</a><a class="lvl2" href="#auth-server-6-session-grant-token">6. Session grant (token)</a><a class="lvl2" href="#auth-server-7-data-model-sqlite">7. Data model (SQLite)</a><a class="lvl2" href="#auth-server-8-technology-choices">8. Technology choices</a><a class="lvl2" href="#auth-server-9-raspberry-pi-3-deployment">9. Raspberry Pi 3 deployment</a><a class="lvl2" href="#auth-server-10-security-checklist">10. Security checklist</a><a class="lvl2" href="#auth-server-11-roadmap-integration">11. Roadmap integration</a><a class="lvl2" href="#auth-server-12-open-questions">12. Open questions</a><a class="lvl0" href="#ui">ScreenGrid — Phase 1 UI</a><a class="lvl2" href="#ui-window-shell-views-mainwindow-xaml">Window shell (Views/MainWindow.xaml)</a><a class="lvl2" href="#ui-home-screen-views-homeview-xaml">Home screen (Views/HomeView.xaml)</a><a class="lvl2" href="#ui-session-screen-views-sessionview-xaml">Session screen (Views/SessionView.xaml)</a><a class="lvl2" href="#ui-settings-screen-views-settingsview-xaml">Settings screen (Views/SettingsView.xaml)</a><a class="lvl2" href="#ui-controls-videosurface-xaml">Controls/VideoSurface.xaml</a><a class="lvl2" href="#ui-theming">Theming</a><a class="lvl2" href="#ui-localization">Localization</a><a class="lvl2" href="#ui-architecture-mvvm">Architecture (MVVM)</a><a class="lvl2" href="#ui-current-limitations-intentional-for-phase-1">Current limitations (intentional for Phase 1)</a><a class="lvl0" href="#roadmap">ScreenGrid — Roadmap</a><a class="lvl2" href="#roadmap-phase-0-setup">Phase 0 — Setup</a><a class="lvl2" href="#roadmap-phase-1-front-page-ui">Phase 1 — Front-page UI</a><a class="lvl2" href="#roadmap-phase-2-signaling-connectivity">Phase 2 — Signaling &amp; connectivity</a><a class="lvl2" href="#roadmap-phase-3-capture-media">Phase 3 — Capture &amp; media</a><a class="lvl2" href="#roadmap-phase-4-remote-input">Phase 4 — Remote input</a><a class="lvl2" href="#roadmap-phase-5-security">Phase 5 — Security</a><a class="lvl2" href="#roadmap-phase-6-community-app">Phase 6 — Community app</a>
+    <div class="toc-note">
+      Markdown-filerne i <code>docs/</code> er den <b>kanoniske kilde</b>. Denne side
+      genereres ud fra dem — derfor kan den aldrig komme ud af sync.
+    </div>
+  </nav>
+
+  <main id="content">
+<section class="doc" id="oversigt">
+      <h1 class="doc-title">ScreenGrid</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="README.md">README.md</a></p>
+<p>An open-source, cross-platform <strong>remote desktop</strong> application (AnyDesk / Supremo style) built with <strong>C# / .NET 10 / WPF</strong>.</p>
+<blockquote class="callout"><p><strong>Status: Phase 1 — user interface.</strong> The application currently contains the complete front-page UI (sharing + connecting) and a placeholder session screen. There is <strong>no networking, encryption, screen capture or input control yet.</strong></p></blockquote>
+<hr />
+<h2 id="oversigt-why">Why</h2>
+<p>ScreenGrid is designed around a small set of reusable libraries so that the same capture → encode → transport → decode → render pipeline can later power a Discord-style community/streaming application, not just remote control.</p>
+<h2 id="oversigt-technology">Technology</h2>
+<table><thead><tr><th>Area</th><th>Choice</th></tr></thead><tbody><tr><td>Runtime</td><td>.NET 10 (<code>net10.0-windows</code>)</td></tr><tr><td>UI framework</td><td>WPF</td></tr><tr><td>MVVM</td><td><code>CommunityToolkit.Mvvm</code> (source-generated properties &amp; commands)</td></tr><tr><td>Theming / chrome</td><td><code>WPF-UI</code> (lepo.co, MIT) — Fluent theme, custom title bar, Mica</td></tr><tr><td>Localization</td><td><code>.resx</code> based (<code>Resources/Strings.resx</code>, English = neutral)</td></tr></tbody></table>
+<h2 id="oversigt-repository-layout">Repository layout</h2>
+<pre><code>ScreenGrid.slnx                       Solution (new XML format)
+Directory.Build.props                 Shared build properties
+LICENSE                               PolyForm Noncommercial 1.0.0
+THIRD-PARTY-NOTICES.md                Licenses of the components we depend on
+src/
+  ScreenGrid.Client.App/              WPF front-end (viewer + host UI)
+    App.xaml(.cs)                     Application + theme dictionaries
+    Views/                            MainWindow, HomeView, SessionView, SettingsView
+    ViewModels/                       MVVM view models (shell + panels)
+    Controls/VideoSurface.xaml        Reusable video presentation control
+    Services/IAppNavigator.cs         Navigation abstraction
+    Models/RecentConnection.cs        Recent-connection model
+    Resources/Strings.resx            Localized strings (English)
+    Resources/Brand.xaml              Brand palette + shared styles
+docs/
+  ARCHITECTURE.md                     Project layout &amp; coding rules
+  PROTOCOL.md                         Handshake &amp; connection protocol design
+  TRANSPORT.md                        QUIC / TLS 1.3 explained (what &amp; why)
+  RELIABILITY.md                      Memory / resource-safety rules
+  AUTH-SERVER.md                      Auth &amp; approval service design
+  architecture-map.html               Interactive architecture node map
+  documentation.html                  Browsable documentation hub — GENERATED
+  UI.md                               Phase 1 UI documentation
+  ROADMAP.md                          Phase plan
+tools/
+  build-docs.mjs                      Generates docs/documentation.html from the markdown</code></pre>
+<p>Later phases add <code>Host.Agent</code>, <code>Signaling.Server</code> and the reusable <code>Crypto</code>, <code>Transport</code>, <code>Media</code>, <code>Protocol</code> and <code>RemoteControl</code> libraries.</p>
+<h2 id="oversigt-building-running">Building &amp; running</h2>
+<pre><code># restore + build
+dotnet build ScreenGrid.slnx -c Debug
+
+# run the UI
+dotnet run --project src/ScreenGrid.Client.App</code></pre>
+<p>Requirements: Windows 10/11 and the .NET 10 SDK.</p>
+<h2 id="oversigt-documentation">Documentation</h2>
+<ul><li><a class="inline" href="documentation.html"><code>docs/documentation.html</code></a> — <strong>browsable documentation hub</strong> with a table of contents. <strong>Generated</strong> from the markdown below — open it in a browser.</li><li><a class="inline" href="architecture-map.html"><code>docs/architecture-map.html</code></a> — <strong>interactive node map</strong> (phases, dependencies, dataflow, runtime topology). Open it in a browser — no server or build needed.</li><li><a class="inline" href="#transport"><code>docs/TRANSPORT.md</code></a> — <strong>QUIC / TLS 1.3</strong> explained: what it is, what it gives us, deployment.</li><li><a class="inline" href="#arkitektur"><code>docs/ARCHITECTURE.md</code></a> — project layout &amp; coding rules (module + file-size budget).</li><li><a class="inline" href="#protokol"><code>docs/PROTOCOL.md</code></a> — connection handshake &amp; session protocol design.</li><li><a class="inline" href="#reliability"><code>docs/RELIABILITY.md</code></a> — memory / resource-safety and DoS rules.</li><li><a class="inline" href="#ui"><code>docs/UI.md</code></a> — what Phase 1 looks like and how to extend it.</li><li><a class="inline" href="#roadmap"><code>docs/ROADMAP.md</code></a> — the phased delivery plan.</li><li><a class="inline" href="#auth-server"><code>docs/AUTH-SERVER.md</code></a> — the 2FA approval service design.</li></ul>
+<h3 id="oversigt-regenerating-the-html-documentation">Regenerating the HTML documentation</h3>
+<p>The markdown files above are the <strong>single source of truth</strong>; <code>docs/documentation.html</code> is a build product and must never be edited by hand.</p>
+<pre><code>node tools/build-docs.mjs           # regenerate docs/documentation.html
+node tools/build-docs.mjs --check   # verify it is up to date (CI does this)</code></pre>
+<p>Requires Node.js. <code>docs/architecture-map.html</code> is <strong>not</strong> generated — it is a hand-authored, self-contained interactive diagram.</p>
+<h2 id="oversigt-license">License</h2>
+<p>ScreenGrid is <strong>source-available</strong> under the <strong>PolyForm Noncommercial License 1.0.0</strong> — see <a class="inline" href="../LICENSE"><code>LICENSE</code></a>.</p>
+<ul><li>✅ <strong>Free</strong> for personal use, hobby projects, study, research, and use by charities, educational institutions, public research / public safety / health / environmental organizations and government bodies.</li><li>❌ <strong>Commercial use and commercial redistribution require a separate license.</strong></li></ul>
+<p>Third-party components keep their own licenses — see <a class="inline" href="THIRD-PARTY-NOTICES.md"><code>THIRD-PARTY-NOTICES.md</code></a>. ScreenGrid links against <strong>WPF-UI</strong> and <strong>CommunityToolkit.Mvvm</strong>, both MIT licensed.</p>
+<blockquote class="callout"><p><strong>Note:</strong> versions released before this change were licensed under AGPL-3.0-or-later. That grant is irrevocable for those versions; the PolyForm terms apply going forward.</p></blockquote>
+<p>For commercial licensing, contact the maintainer.</p>
+    </section>
+<section class="doc" id="arkitektur">
+      <h1 class="doc-title">ScreenGrid — Architecture &amp; coding guidelines</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="ARCHITECTURE.md">ARCHITECTURE.md</a></p>
+<p>This document defines <strong>how</strong> the code is structured and the rules every contribution (human or AI) must follow. It exists so that the codebase can grow across six phases without turning into a monolith.</p>
+<hr />
+<h2 id="arkitektur-1-guiding-principles">1. Guiding principles</h2>
+<ol><li><strong>Small, focused components.</strong> Each project/library has a single responsibility. Reusable pieces (transport, media, crypto) never depend on the WPF UI.</li><li><strong>One reason to change per file.</strong> If you cannot name a file's single responsibility in ~3 words, it should be split.</li><li><strong>View-model first navigation.</strong> The UI shows view models; WPF resolves the matching view through <code>DataTemplate</code>s. View models never touch <code>Window</code> / <code>UserControl</code>.</li><li><strong>No secrets in the client.</strong> Identity, signing and trust live on the server side (see <a class="inline" href="#auth-server"><code>AUTH-SERVER.md</code></a>).</li></ol>
+<hr />
+<h2 id="arkitektur-2-file-size-budget-the-1000-line-rule">2. File-size budget (the &quot;1000-line rule&quot;)</h2>
+<p>A hard ceiling alone is a bad design rule, so ScreenGrid uses <strong>two thresholds</strong> plus a primary rule:</p>
+<table><thead><tr><th>Rule</th><th>Limit</th><th>Enforcement</th></tr></thead><tbody><tr><td><strong>Primary rule</strong></td><td>—</td><td>one responsibility per file</td></tr><tr><td>Soft ceiling (review trigger)</td><td><strong>600 lines</strong></td><td>split unless justified</td></tr><tr><td>Hard ceiling</td><td><strong>1000 lines</strong></td><td>must be split</td></tr></tbody></table>
+<ul><li>The soft ceiling is a <strong>smoke alarm</strong>: when a file approaches 600 lines, stop and ask <em>&quot;does this still have one responsibility?&quot;</em>.</li><li>The hard ceiling is <strong>mandatory</strong> — a file over 1000 lines must be split before merge.</li><li><strong>Exceptions</strong> (do not split, document why in the PR): auto-generated files (including <code>docs/documentation.html</code>, produced by <code>tools/build-docs.mjs</code>), <code>.resx</code> / <code>.Designer.cs</code> accessors, localization resource tables, and pure XAML layout that is genuinely one screen.</li></ul>
+<p>A file that fits the rule is usually <strong>100–300 lines</strong>. If a file is small but handles two concerns, split it anyway — the line count is a <em>symptom</em>, not the goal.</p>
+<hr />
+<h2 id="arkitektur-3-project-layout-planned">3. Project layout (planned)</h2>
+<p>The solution grows over the phases. Target layout:</p>
+<pre><code>src/
+  ScreenGrid.Client.App/        WPF viewer + host UI (Phase 1)            ✔ exists
+  ScreenGrid.Protocol/          Shared DTOs &amp; wire contracts              Phase 2
+  ScreenGrid.Auth.Server/       Control plane: directory, 2FA, grants     Phase 2
+  ScreenGrid.Host.Agent/        Windows host: capture + input + grants    Phase 2
+  ScreenGrid.Transport/         Sockets/QUIC, ICE, TURN/STUN              Phase 2
+  ScreenGrid.Media/             Capture + encode (Desktop Duplication)    Phase 3
+  ScreenGrid.RemoteControl/     Mouse/keyboard/clipboard injection        Phase 4
+  ScreenGrid.Crypto/            Identity keys, E2EE of media + input      Phase 5
+tests/
+  ScreenGrid.&lt;Component&gt;.Tests/ One test project per library</code></pre>
+<p>Rules:</p>
+<ul><li><strong>Dependencies flow inwards:</strong> <code>Client.App</code> / <code>Host.Agent</code> may depend on <code>Transport</code>, <code>Media</code>, <code>Crypto</code>, <code>Protocol</code>; the libraries never depend on the apps or on WPF.</li><li><code>Protocol</code> is the only project referenced by <em>both</em> client and server; it contains data + interfaces, never behaviour that needs a platform.</li><li>Only platform-specific projects set <code>TargetFramework</code> to <code>*-windows</code>.</li></ul>
+<hr />
+<h2 id="arkitektur-4-folder-conventions-inside-a-component">4. Folder conventions inside a component</h2>
+<p>Once a component grows, split by responsibility:</p>
+<pre><code>ScreenGrid.&lt;Component&gt;/
+  &lt;Component&gt;...        public entry points (few, small files)
+  Endpoints/            (servers) transport endpoints / Minimal API routes
+  Services/             orchestration + business logic
+  Models/  or  Entities/ one type per file
+  Security/             hashing, signing, verification
+  Data/                 persistence (SQLite context, migrations)
+  Contracts/            DTOs, options objects
+  &lt;Topic&gt;/              a feature slice (e.g. Capture/, Encode/)</code></pre>
+<hr />
+<h2 id="arkitektur-5-c-coding-conventions">5. C# coding conventions</h2>
+<ul><li><strong>Nullable</strong> and <strong>implicit usings</strong> are on for every project (see <code>Directory.Build.props</code>); do not disable them per file.</li><li><strong>File-scoped namespaces</strong>, <code>var</code> only when the type is apparent (see <code>.editorconfig</code>).</li><li><strong>MVVM</strong>: <code>CommunityToolkit.Mvvm</code> — <code>[ObservableProperty]</code>, <code>[RelayCommand]</code>, <code>ObservableObject</code>. Keep view models free of <code>System.Windows</code> except where a Phase-1 convenience already exists (e.g. clipboard).</li><li><strong>Async</strong>: name methods <code>...Async</code>, pass <code>CancellationToken</code>, and never block on <code>.Result</code> / <code>.Wait()</code> in UI code.</li><li><strong>Disposal</strong>: anything owning a socket, handle or bitmap is <code>IDisposable</code>.</li><li><strong>Logging</strong>: use <code>Microsoft.Extensions.Logging</code> abstractions, never <code>Console.WriteLine</code> in libraries.</li></ul>
+<hr />
+<h2 id="arkitektur-6-line-count-quality-checks">6. Line-count / quality checks</h2>
+<p>Recommended (add in Phase 2 CI):</p>
+<ul><li>A simple script / Roslyn analyzer that fails the build when a <code>.cs</code> file exceeds <strong>1000 lines</strong>.</li><li><code>dotnet format --verify-no-changes</code> against <code>.editorconfig</code>.</li><li>Build on both <code>windows</code> (client) and <code>linux-arm64</code> (server) targets.</li></ul>
+<hr />
+<h2 id="arkitektur-7-documentation-map">7. Documentation map</h2>
+<table><thead><tr><th>Document</th><th>Contents</th></tr></thead><tbody><tr><td><code>README.md</code></td><td>Project overview + build instructions</td></tr><tr><td><code>docs/documentation.html</code></td><td>Browsable documentation hub (generated)</td></tr><tr><td><code>docs/architecture-map.html</code></td><td>Interactive architecture node map</td></tr><tr><td><code>docs/ARCHITECTURE.md</code></td><td>This file — structure &amp; coding rules</td></tr><tr><td><code>docs/PROTOCOL.md</code></td><td>Handshake &amp; connection protocol design</td></tr><tr><td><code>docs/TRANSPORT.md</code></td><td>QUIC / TLS 1.3 explained (what &amp; why)</td></tr><tr><td><code>docs/RELIABILITY.md</code></td><td>Memory / resource-safety &amp; DoS rules</td></tr><tr><td><code>docs/ROADMAP.md</code></td><td>Phase plan</td></tr><tr><td><code>docs/UI.md</code></td><td>Phase-1 UI reference</td></tr><tr><td><code>docs/AUTH-SERVER.md</code></td><td>Auth / approval control-plane design</td></tr></tbody></table>
+    </section>
+<section class="doc" id="transport">
+      <h1 class="doc-title">ScreenGrid — Transport &amp; cryptography: QUIC / TLS 1.3</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="TRANSPORT.md">TRANSPORT.md</a></p>
+<blockquote class="callout"><p>Status: <strong>decided, not implemented</strong> — see <a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §8 (D1–D4).</p><p>This document explains <strong>what</strong> QUIC and TLS 1.3 are, <strong>what they give us</strong>, and <strong>how</strong> ScreenGrid uses them. It is the background behind the transport decision. <a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> remains the normative handshake specification; this file is the readable reference for anyone who has not worked with QUIC before.</p></blockquote>
+<hr />
+<h2 id="transport-1-in-one-paragraph">1. In one paragraph</h2>
+<p>ScreenGrid carries <strong>every</strong> channel — <code>control</code>, <code>video</code>, <code>audio</code>, <code>input</code> and <code>clipboard</code> — over a single <strong>QUIC</strong> connection. QUIC is a modern transport built on top of UDP that includes <strong>TLS 1.3 as its mandatory, non-negotiable encryption layer</strong>. That gives us a vetted, standards-based authenticated key exchange for free, plus multiplexed independent streams, and it means we never write a line of cryptography ourselves.</p>
+<hr />
+<h2 id="transport-2-what-is-quic">2. What is QUIC?</h2>
+<p>QUIC (originally &quot;Quick UDP Internet Connections&quot;, now an IETF standard, RFC 9000) is a general-purpose transport protocol. Think of it as <strong>&quot;TCP + TLS + HTTP/2-style multiplexing, redesigned from scratch on top of UDP&quot;</strong> — but with the important difference that encryption is <em>built in</em> rather than bolted on.</p>
+<table><thead><tr><th>Property</th><th>TCP + TLS</th><th>QUIC</th></tr></thead><tbody><tr><td>Carried over</td><td>Raw IP packets</td><td>UDP datagrams</td></tr><tr><td>Encryption</td><td>Optional, added as a layer</td><td><strong>Mandatory</strong>, integrated</td></tr><tr><td>Handshake</td><td>2–3 round-trips</td><td>1 round-trip (0-RTT optional)</td></tr><tr><td>Multiple independent streams</td><td>No (one byte stream)</td><td><strong>Yes</strong> — many streams per connection</td></tr><tr><td>Head-of-line blocking</td><td>Connection-wide</td><td><strong>Per-stream only</strong></td></tr><tr><td>Connection survives IP change</td><td>No</td><td>Yes (connection IDs / migration)</td></tr><tr><td>Replay protection</td><td>Application's job</td><td>Built in (packet numbers)</td></tr></tbody></table>
+<p>Because QUIC runs on UDP it can be deployed and upgraded without touching the operating system's networking stack, and because TLS 1.3 is <em>inside</em> the protocol there is no way to accidentally run it unencrypted or negotiate a weak cipher.</p>
+<hr />
+<h2 id="transport-3-what-is-tls-1-3">3. What is TLS 1.3?</h2>
+<p>TLS 1.3 (RFC 8446) is the current version of <strong>Transport Layer Security</strong> — the protocol that turns an insecure channel into an authenticated, encrypted one. It is the layer that performs:</p>
+<ul><li><strong>the handshake</strong> — the other side proves who it is;</li><li><strong>key agreement</strong> — both sides derive fresh session keys that an eavesdropper cannot compute (X25519 ephemeral Diffie-Hellman);</li><li><strong>record encryption</strong> — every byte after the handshake is sealed with an AEAD cipher.</li></ul>
+<p>TLS 1.3 removed everything that had become dangerous in older versions:</p>
+<ul><li><strong>No downgrade.</strong> It cannot fall back to TLS 1.2 or 1.1; a peer that only supports old versions simply fails.</li><li><strong>No weak options.</strong> Obsolete ciphers (RC4, 3DES, static RSA key exchange, CBC-mode constructions) are gone. Only AEAD ciphers remain (AES-GCM, ChaCha20-Poly1305).</li><li><strong>Forward secrecy is required.</strong> Session keys are ephemeral — leaking a long-term key tomorrow cannot decrypt a session recorded today.</li><li><strong>Most of the handshake is encrypted</strong>, including the server certificate. In older TLS versions anyone on the wire could see which certificate was in use.</li></ul>
+<p>These are exactly the properties listed as principles in <a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §2 — which is why we let the stack provide them instead of implementing them ourselves.</p>
+<hr />
+<h2 id="transport-4-why-quic-for-a-remote-desktop">4. Why QUIC for a remote desktop?</h2>
+<h3 id="transport-4-1-security-the-main-reason">4.1 Security — the main reason</h3>
+<table><thead><tr><th>Guarantee</th><th>How QUIC/TLS 1.3 provides it</th><th>Why it matters to us</th></tr></thead><tbody><tr><td>Confidentiality</td><td>AEAD record encryption (AES-GCM / ChaCha20-Poly1305)</td><td>Frames and keystrokes are unreadable on the wire</td></tr><tr><td>Integrity</td><td>AEAD authentication tag per record</td><td>A tampered frame is rejected, never rendered or injected</td></tr><tr><td>Mutual authentication</td><td>Certificates bound to our Ed25519 identity (§8 D3)</td><td>Both sides prove possession of their device key</td></tr><tr><td>Forward secrecy</td><td>Ephemeral X25519 key agreement</td><td>A future device-key leak cannot decrypt recorded sessions</td></tr><tr><td>Replay protection</td><td>Monotonic packet numbers inside the protocol</td><td>Captured packets cannot be replayed to re-inject input</td></tr><tr><td>No downgrade</td><td>TLS 1.3 only, ALPN-bound version negotiation</td><td>An attacker cannot force a weaker configuration</td></tr><tr><td>Encrypted handshake</td><td>Everything after the first flight is protected</td><td>Device IDs, roles and version never travel in cleartext</td></tr></tbody></table>
+<p><strong>We do not implement any of this.</strong> That is the point: no custom key schedule, no &quot;encrypt the key with my public key&quot; pattern (explicitly rejected in <a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §3).</p>
+<h3 id="transport-4-2-performance-where-it-actually-wins">4.2 Performance — where it actually wins</h3>
+<ul><li><strong>Multiplexing without head-of-line blocking.</strong> Each channel is its own QUIC <em>stream</em> with its own flow-control window and its own retransmission. If the <code>video</code> stream is stalled waiting for a lost packet, <code>input</code> and <code>control</code> streams keep flowing. On TCP a single lost packet stalls <em>everything</em> — which for a remote-desktop session means the mouse freezes while the screen recovers. <strong>This is the single most important property we gain.</strong></li><li><strong>Fast establishment.</strong> One round-trip instead of two or three. On a 60 ms link that is ~120 ms saved before the first frame.</li><li><strong>Better loss recovery</strong> with modern congestion control (CUBIC / BBR in MsQuic), which is what keeps the picture usable on a flaky Wi-Fi link.</li><li><strong>Connection migration.</strong> A session is identified by a connection ID, not by the IP/port four-tuple, so a laptop moving from Wi-Fi to cellular can keep the same session (subject to the NAT-traversal caveat in §5).</li></ul>
+<h3 id="transport-4-3-honest-limitations">4.3 Honest limitations</h3>
+<ul><li><strong>Peak throughput is not the selling point.</strong> On a clean LAN, a single bulk video stream moves about as fast as TCP. QUIC's advantage is latency <em>under loss</em> and multiplexing, not maximum bandwidth.</li><li><strong>UDP throttling.</strong> A minority of ISPs and corporate networks treat UDP as second-class or block it outright. A TCP fallback stays on the roadmap (<a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §8 D1).</li><li><strong>0-RTT is replayable.</strong> QUIC can re-send application data in the very first flight, but such data can be captured and replayed. So <strong>input events and session grants must never be sent in 0-RTT</strong>; for v1 we disable 0-RTT entirely.</li></ul>
+<hr />
+<h2 id="transport-5-what-quic-does-not-do-nat-traversal">5. What QUIC does <em>not</em> do: NAT traversal</h2>
+<p>QUIC secures and multiplexes a connection that <strong>already exists</strong> between two reachable endpoints. It does not by itself solve <em>&quot;how do two devices behind home routers find each other?&quot;</em> — that is the job of <strong>ICE / STUN / TURN</strong>, techniques that originated with WebRTC:</p>
+<table><thead><tr><th>Acronym</th><th>Job</th></tr></thead><tbody><tr><td>STUN</td><td>Ask a public server &quot;what is my address as seen from the outside?&quot;</td></tr><tr><td>ICE</td><td>Try all candidate address pairs and pick the one that actually works</td></tr><tr><td>TURN</td><td>Last resort: relay the traffic through a public server</td></tr></tbody></table>
+<p>Pairing ICE with QUIC is <strong>not a standardised, well-trodden path</strong>: ICE nominates a UDP candidate pair, while QUIC assumes it owns its socket and migrates by connection ID. To keep that risk out of the critical path we stage NAT traversal (<a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §8 D2):</p>
+<table><thead><tr><th>Stage</th><th>Mechanism</th></tr></thead><tbody><tr><td><strong>v1</strong></td><td>LAN only; remote access via an overlay tunnel (WireGuard / Tailscale)</td></tr><tr><td><strong>v2</strong></td><td>STUN + UDP hole-punching (ICE-lite: <code>host</code> + <code>srflx</code> candidates)</td></tr><tr><td><strong>v3</strong></td><td>TURN relay as the last resort behind symmetric NAT / CGNAT</td></tr></tbody></table>
+<p><code>ScreenGrid.Transport</code> keeps the ICE/STUN/TURN seam in its interface from day one, but only the QUIC path is implemented in v1.</p>
+<hr />
+<h2 id="transport-6-how-screengrid-uses-quic">6. How ScreenGrid uses QUIC</h2>
+<h3 id="transport-6-1-one-connection-one-stream-per-channel">6.1 One connection, one stream per channel</h3>
+<pre><code>                    ┌──────────────────── QUIC connection (TLS 1.3) ────────────────────┐
+Host.Agent  ◀──────▶│  stream 0: control   ←→  handshake, session events, keep-alive     │◀─────▶ Client.App
+                    │  stream 1: video     ──▶  encoded frames (host → controller)       │
+                    │  stream 2: audio     ──▶  audio frames                             │
+                    │  stream 3: input     ◀──  mouse / keyboard events (controller→host)│
+                    │  stream 4: clipboard ←→  text / images, bounded chunks             │
+                    └────────────────────────────────────────────────────────────────────┘</code></pre>
+<p>Each stream has independent flow control and retransmission. Streams are created lazily and torn down per channel, but they all share <strong>one</strong> TLS 1.3 session.</p>
+<h3 id="transport-6-2-two-handshakes-one-purpose-each">6.2 Two handshakes, one purpose each</h3>
+<table><thead><tr><th>Layer</th><th>Protocol</th><th>Establishes</th></tr></thead><tbody><tr><td>Transport</td><td>QUIC / TLS 1.3</td><td>Session keys, confidentiality, integrity, replay protection</td></tr><tr><td>Application</td><td>ScreenGrid handshake</td><td><strong>Identity + authorisation only</strong> — device-key proof and the grant</td></tr></tbody></table>
+<p>Critical detail: because QUIC already produced the transport keys, our application handshake <strong>does not exchange keys</strong>. It proves who is on the other end and that this session is allowed. (In a hypothetical raw-UDP/Noise fallback, data-phase keys <em>would</em> be derived here via HKDF — see <a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §4.3 and §8 D4.)</p>
+<h3 id="transport-6-3-certificate-model-self-signed-per-device-pinning">6.3 Certificate model: self-signed per device + pinning</h3>
+<p>Each device generates a <strong>self-signed certificate bound to its Ed25519 identity key</strong>. The peer never consults a public CA: it verifies the certificate against the public key it fetched from the directory and <strong>pins</strong> it (<a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> §8 D3). Revoking a device is a directory action, not a CA operation — which keeps the Raspberry Pi free of revocation infrastructure.</p>
+<h3 id="transport-6-4-policy-summary">6.4 Policy summary</h3>
+<table><thead><tr><th>Policy</th><th>Decision</th></tr></thead><tbody><tr><td>0-RTT</td><td><strong>Disabled</strong> in v1 (replay risk; never used for input or grants)</td></tr><tr><td>ALPN</td><td>A single ScreenGrid protocol id, bound into the signed transcript</td></tr><tr><td>Separate data-phase key</td><td>Not needed for v1 — TLS 1.3 record layer is sufficient (§8 D4)</td></tr><tr><td>Rekeying</td><td>QUIC key update after N bytes / T minutes</td></tr><tr><td>Plaintext bootstrap data</td><td>None — server certificate and version ride inside the handshake</td></tr></tbody></table>
+<hr />
+<h2 id="transport-7-deployment-facts-why-this-is-cheap-for-us">7. Deployment facts (why this is cheap for us)</h2>
+<p><code>System.Net.Quic</code> in .NET is a managed wrapper over <strong>MsQuic</strong>, Microsoft's production QUIC implementation.</p>
+<table><thead><tr><th>Platform</th><th>What is needed</th></tr></thead><tbody><tr><td>Windows 11 / Server 2022+</td><td><strong>Nothing</strong> — MsQuic ships with the OS</td></tr><tr><td>Windows 10</td><td>MsQuic redistributable (only if it stays a target)</td></tr><tr><td>Linux</td><td><code>libmsquic</code> package</td></tr></tbody></table>
+<p>ScreenGrid's QUIC endpoints are <code>Client.App</code> and <code>Host.Agent</code>, <strong>both Windows</strong> — so there is no extra dependency to ship. <code>Auth.Server</code> runs on the Pi but speaks plain <strong>HTTPS (Kestrel) + SQLite</strong> and never touches QUIC, so <strong>no <code>libmsquic</code> is needed on <code>linux-arm64</code></strong> — which keeps its <code>MemoryMax=300M</code> budget clean (<a class="inline" href="#reliability"><code>RELIABILITY.md</code></a> §4).</p>
+<hr />
+<h2 id="transport-8-alternatives-we-rejected">8. Alternatives we rejected</h2>
+<table><thead><tr><th>Option</th><th>Why not (for v1)</th></tr></thead><tbody><tr><td><strong>TCP + TLS 1.3</strong></td><td>One byte stream → connection-wide head-of-line blocking (mouse freezes)</td></tr><tr><td><strong>WebRTC</strong> (DTLS/SCTP)</td><td>Heavy stack; SCTP-over-DTLS is less flexible than QUIC streams</td></tr><tr><td><strong>UDP + Noise</strong></td><td>We would own key schedule, nonces, rekeying and replay windows — what §2 forbids</td></tr><tr><td><strong>Overlay only</strong> (WireGuard/Tailscale, no QUIC)</td><td>Gives reachability but no per-stream flow control or identity binding</td></tr></tbody></table>
+<p>An overlay tunnel is <strong>complementary</strong>, not an alternative: the v1 remote path uses a tunnel for reachability and QUIC for the session itself.</p>
+<hr />
+<h2 id="transport-9-glossary">9. Glossary</h2>
+<table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody><tr><td>AEAD</td><td>Authenticated Encryption with Associated Data — encrypts <em>and</em> detects tampering</td></tr><tr><td>ALPN</td><td>Application-Layer Protocol Negotiation — how the app id is agreed in the handshake</td></tr><tr><td>CGNAT</td><td>Carrier-Grade NAT — a second NAT layer that defeats simple port-forwarding</td></tr><tr><td>DTLS</td><td>TLS for datagrams (UDP) — used by WebRTC</td></tr><tr><td>Ed25519</td><td>Edwards-curve signature algorithm — our long-lived <strong>device identity</strong></td></tr><tr><td>HKDF</td><td>HMAC-based Key Derivation Function — derives keys from a shared secret</td></tr><tr><td>MsQuic</td><td>Microsoft's cross-platform QUIC implementation, used by <code>System.Net.Quic</code></td></tr><tr><td>RTT</td><td>Round-Trip Time — how long a packet takes to the peer and back</td></tr><tr><td>Stream</td><td>A QUIC primitive: an ordered, flow-controlled byte channel inside a connection</td></tr><tr><td>X25519</td><td>The elliptic curve used for ephemeral key agreement in TLS 1.3</td></tr></tbody></table>
+<hr />
+<h2 id="transport-10-references">10. References</h2>
+<ul><li><a class="inline" href="#protokol"><code>PROTOCOL.md</code></a> — normative handshake &amp; session design (§8 = decisions).</li><li><a class="inline" href="#reliability"><code>RELIABILITY.md</code></a> — buffer / queue / DoS rules every channel obeys.</li><li><a class="inline" href="#auth-server"><code>AUTH-SERVER.md</code></a> — identity, directory and session grants.</li><li>RFC 9000 (QUIC transport), RFC 9001 (QUIC + TLS), RFC 8446 (TLS 1.3).</li></ul>
+    </section>
+<section class="doc" id="protokol">
+      <h1 class="doc-title">ScreenGrid — Connection protocol (handshake &amp; session design)</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="PROTOCOL.md">PROTOCOL.md</a></p>
+<blockquote class="callout"><p>Status: <strong>proposal</strong> — design agreed, not implemented. Covers Phase 2 (Signaling / Transport) and Phase 5 (Security).</p><p><strong>Transport decided (§8):</strong> QUIC / TLS 1.3 (<code>System.Net.Quic</code>), NAT traversal staged — LAN + overlay tunnel first, STUN/ICE in v2, TURN in v3.</p></blockquote>
+<h2 id="protokol-1-why-this-document-exists">1. Why this document exists</h2>
+<p>The handshake is the single most important security decision in a remote-desktop product: it is where identity is proven and where the keys that protect every later frame and keystroke are established. A subtle mistake here (a missing nonce, a downgrade path, a DIY cipher) compromises the <strong>entire</strong> session, so it is written down and reviewed <em>before</em> any code is written.</p>
+<p>It also fixes the <strong>resource limits</strong> that the handshake and message framing must enforce so a hostile peer cannot exhaust memory — see <a class="inline" href="#reliability"><code>RELIABILITY.md</code></a>.</p>
+<h2 id="protokol-2-principles">2. Principles</h2>
+<ol><li><strong>Do not roll your own crypto.</strong> No custom block ciphers, no custom MAC constructions, no custom key derivation.</li><li><strong>Prefer a vetted handshake.</strong> Use TLS 1.3 (via QUIC) or the Noise Protocol Framework — never an ad-hoc &quot;send key, hope for the best&quot; exchange.</li><li><strong>Mutual authentication.</strong> Both host and controller prove possession of their long-lived device key. Neither trusts the other blindly.</li><li><strong>Forward secrecy.</strong> Ephemeral (per-session) key agreement, so a later leak of a device key cannot decrypt recorded past sessions.</li><li><strong>Authenticate the metadata too.</strong> Version, roles, device IDs and the session grant are bound into the handshake transcript, so they cannot be tampered with in flight.</li><li><strong>Fail closed.</strong> Any verification failure tears the connection down immediately — there is no &quot;continue anyway&quot; path.</li></ol>
+<h2 id="protokol-3-transport-handshake-building-blocks">3. Transport &amp; handshake building blocks</h2>
+<table><thead><tr><th>Layer</th><th>Recommendation</th><th>Notes</th></tr></thead><tbody><tr><td>Secure transport</td><td><strong>QUIC</strong> (<code>System.Net.Quic</code>, MsQuic)</td><td>Built-in TLS 1.3, independent streams, per-stream + connection flow control, loss recovery.</td></tr><tr><td>Key agreement</td><td>X25519 (ephemeral)</td><td>Handled inside TLS 1.3.</td></tr><tr><td>Device identity</td><td><strong>Ed25519</strong> device keys (<code>NSec.Cryptography</code>)</td><td>Registered with <code>Auth.Server</code>, verified by the peer.</td></tr><tr><td>Payload crypto</td><td>AEAD: ChaCha20-Poly1305 (preferred) or AES-256-GCM</td><td>Per-record nonce, never reused.</td></tr><tr><td>Directory/signals</td><td>HTTPS to <code>Auth.Server</code></td><td>Device resolution + signed records.</td></tr></tbody></table>
+<p><strong>Why QUIC first:</strong> it removes almost all hand-rolled risk (TLS 1.3, replay protection, rekeying and flow control are handled by the stack), multiplexes the control / video / audio / input / clipboard channels as <strong>separate streams</strong> with independent back-pressure, and behaves well on lossy links. A WebRTC stack is the alternative; a raw UDP + Noise implementation is the fallback only where QUIC is unavailable.</p>
+<blockquote class="callout"><p><strong>Reject this pattern:</strong> &quot;here is my public key, here is a random session key encrypted with it.&quot; It has no forward secrecy, no transcript binding, and is trivial to get wrong.</p></blockquote>
+<h2 id="protokol-4-connection-phases">4. Connection phases</h2>
+<pre><code>Directory (HTTPS)          QUIC handshake           App handshake         Data phase
+resolve host + pubkey  →   TLS 1.3 + cert pin   →   device-key proof  →   AEAD streams</code></pre>
+<h3 id="protokol-4-1-pre-handshake-resolution">4.1 Pre-handshake — resolution</h3>
+<ol><li>The controller asks <code>Auth.Server</code> for the host record (endpoint hints + Ed25519 public key). The directory response is <strong>signed by the server</strong>; the client pins the server public key.</li><li>The controller verifies the server signature and the record freshness (<code>last_seen</code>, TTL). Stale records force a re-resolve.</li></ol>
+<h3 id="protokol-4-2-secure-transport-tls-1-3-quic">4.2 Secure transport — TLS 1.3 (QUIC)</h3>
+<ul><li>Each device presents a self-signed certificate <strong>bound to its Ed25519 identity</strong>; both sides <strong>pin the peer certificate to the public key obtained from the directory</strong> instead of trusting a public CA.</li><li>ALPN selects the protocol version, e.g. <code>screengrid/1</code>.</li></ul>
+<h3 id="protokol-4-3-application-handshake-identity-binding-grant">4.3 Application handshake — identity binding &amp; grant</h3>
+<p>Runs over the first bi-directional control stream:</p>
+<ol><li><code>hello</code> — protocol version, role, device id, random 32-byte nonce <code>Nc</code>.</li><li>Host replies with its own nonce <code>Nh</code>, and (Phase 5) the <strong>SessionGrant</strong>.</li><li>Both sides compute <code>transcript = H(Nc || Nh || version || hostId || clientId || grant)</code>.</li><li>Each side sends an Ed25519 signature over the transcript, proving possession of its device key; the peer verifies it against the <strong>pinned</strong> public key.</li><li>The client verifies the SessionGrant signature offline (cached server public key) and that it is fresh, single-use (<code>jti</code>) and scoped to this host+client pair.</li><li>On success both sides switch to the data phase. Any failure → immediately close the connection.</li></ol>
+<blockquote class="callout"><p>With QUIC/TLS the transport record keys already exist — this app handshake establishes <strong>identity and authorisation</strong>, not transport keys. Only in a raw UDP/Noise fallback are data-phase keys derived here (via HKDF).</p></blockquote>
+<h3 id="protokol-4-4-data-phase">4.4 Data phase</h3>
+<ul><li>Separate QUIC streams per channel: <code>control</code>, <code>video</code>, <code>audio</code>, <code>input</code>, <code>clipboard</code>. Independent flow control means a stalled video stream cannot block input.</li><li>The TLS 1.3 record layer provides AEAD per record. Any custom layer uses ChaCha20-Poly1305 with a <strong>monotonic 64-bit nonce</strong> that never repeats.</li><li><strong>Rekeying:</strong> rotate data keys after N bytes or T minutes (QUIC key-update, or an explicit rekey for a custom layer).</li></ul>
+<h2 id="protokol-5-replay-freshness-downgrade-protection">5. Replay, freshness &amp; downgrade protection</h2>
+<table><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody><tr><td>Replayed handshake</td><td>Per-session random nonces from both sides, bound into transcript</td></tr><tr><td>Replayed data</td><td>AEAD nonce never repeats (counter / QUIC packet numbers)</td></tr><tr><td>Replayed grant</td><td><code>jti</code> recorded in the <code>Grant</code> table, single-use, short TTL</td></tr><tr><td>Reordered / stale</td><td>Monotonic counters; drop anything below the high-water mark</td></tr><tr><td>Clock skew</td><td>TTLs tolerate small skew (±60 s); prefer counters over wall-clock</td></tr><tr><td>Version downgrade</td><td>Negotiated version + ALPN bound into the signed transcript</td></tr><tr><td>Cross-session reuse</td><td>Ephemeral keys per connection; keys destroyed on teardown</td></tr></tbody></table>
+<h2 id="protokol-6-message-framing-limits">6. Message framing &amp; limits</h2>
+<ul><li>Control messages are length-prefixed (<code>u32</code> big-endian length + payload).</li><li><strong>The declared length is validated against a hard cap before any allocation</strong> (see <a class="inline" href="#reliability"><code>RELIABILITY.md</code></a> §3). A frame larger than the cap is a protocol error and closes the connection.</li><li>Recommended caps (single source of truth in <code>ScreenGrid.Protocol</code>):<table><thead><tr><th>Message class</th><th>Max size</th></tr></thead><tbody><tr><td>control</td><td>64 KiB</td></tr><tr><td>input event</td><td>4 KiB</td></tr><tr><td>clipboard chunk</td><td>1 MiB</td></tr><tr><td>video frame meta</td><td>64 KiB</td></tr><tr><td>video payload</td><td>8 MiB</td></tr></tbody></table></li><li>Serialization is explicit and versioned; unknown fields are ignored only when the negotiated version allows it.</li></ul>
+<h2 id="protokol-7-failure-handling">7. Failure handling</h2>
+<ul><li>Every network read awaits with a <strong>timeout</strong> and a <code>CancellationToken</code>.</li><li>A handshake has a total budget (e.g. 10 s); exceeding it closes the connection.</li><li>Half-open connections are torn down; no state is retained for a peer that stopped responding beyond its TTL.</li><li>Errors are versioned / tagged codes — never raw exception text sent to the peer.</li></ul>
+<h2 id="protokol-8-decisions">8. Decisions</h2>
+<h3 id="protokol-d1-transport-quic-system-net-quic-msquic-decided">D1 — Transport: QUIC (<code>System.Net.Quic</code> / MsQuic) ✅ decided</h3>
+<p><strong>Chosen:</strong> QUIC as the single secure transport for all channels. <strong>Rejected:</strong> a WebRTC stack (DTLS/SRTP/SCTP) and Noise-over-UDP.</p>
+<p>Rationale:</p>
+<ul><li><strong>Security.</strong> TLS 1.3 is mandatory in QUIC — there is no downgrade path and no weak cipher suite to negotiate. The handshake is encrypted from the first byte (device metadata and version never travel in cleartext), packet numbers give built-in replay protection, and ephemeral key agreement gives forward secrecy. This satisfies §2 without us writing a single line of key schedule.</li><li><strong>Multiplexing.</strong> Independent streams with independent flow control mean a stalled <code>video</code> stream cannot block <code>input</code> or <code>control</code>. This is the single most important property for an interactive remote-desktop session.</li><li><strong>Handshake latency.</strong> 1-RTT (vs. 2–3 RTT for TCP + TLS).</li><li><strong>Migration.</strong> Connection IDs let a session survive a Wi-Fi → cellular change.</li><li><strong>Deployment.</strong> <code>Client.App</code> and <code>Host.Agent</code> are both Windows, where MsQuic ships with the OS (Windows 11 / Server 2022+). No extra dependency. Linux would need <code>libmsquic</code>, but no Linux process uses QUIC — <code>Auth.Server</code> on the Pi is plain HTTPS + SQLite only.</li></ul>
+<p>Caveats accepted:</p>
+<ul><li><strong>0-RTT is replayable.</strong> Input events and session grants MUST NOT be sent in 0-RTT. For v1, 0-RTT is disabled entirely; it may later be enabled for idempotent media data only.</li><li><strong>Peak throughput.</strong> On a clean LAN a single bulk video stream is comparable to TCP; QUIC's win is latency under loss and multiplexing, not raw bandwidth. Some ISPs QoS-throttle UDP, so a TCP fallback remains on the roadmap.</li></ul>
+<h3 id="protokol-d2-nat-traversal-staged-ice-not-in-v1-decided">D2 — NAT traversal: staged, ICE not in v1 ✅ decided</h3>
+<p>ICE/STUN/TURN arose for WebRTC and pairing it with QUIC is <em>not</em> a standardised, well-trodden path: ICE nominates a UDP candidate pair while QUIC assumes it owns its socket and migrates by connection ID. To keep the risk out of the critical path we stage it:</p>
+<table><thead><tr><th>Stage</th><th>Mechanism</th></tr></thead><tbody><tr><td><strong>v1</strong></td><td>LAN only; remote access via an overlay tunnel (WireGuard / Tailscale), per <a class="inline" href="#auth-server"><code>AUTH-SERVER.md</code></a>. No ICE code.</td></tr><tr><td><strong>v2</strong></td><td>STUN + UDP hole-punching (ICE-lite: <code>host</code> + <code>srflx</code> candidates) for a direct internet path.</td></tr><tr><td><strong>v3</strong></td><td>TURN relay as the last resort behind symmetric NAT / CGNAT.</td></tr></tbody></table>
+<p><code>ScreenGrid.Transport</code> keeps the ICE/STUN/TURN seam in its interface from day one, but the implementations land in that order.</p>
+<h3 id="protokol-d3-certificate-model-self-signed-per-device-pinning-decided">D3 — Certificate model: self-signed-per-device + pinning ✅ decided</h3>
+<p>Each device generates a <strong>self-signed certificate bound to its Ed25519 identity key</strong>. The peer verifies the certificate against the public key obtained from the directory and <strong>pins</strong> it — no public CA, no private <code>Auth.Server</code> CA. This keeps deployment (especially the Pi) free of revocation infrastructure: revoking a device is a directory action, not a CA operation.</p>
+<h3 id="protokol-d4-data-phase-keys-tls-1-3-records-only-for-v1-decided">D4 — Data-phase keys: TLS 1.3 records only for v1 ✅ decided</h3>
+<p>No additional application-layer key beyond the QUIC/TLS 1.3 record layer in v1. Rekeying uses QUIC's key update. A separate HKDF-derived key is only introduced if a raw UDP/Noise fallback is ever added.</p>
+<h2 id="protokol-9-remaining-open-questions">9. Remaining open questions</h2>
+<ol><li>Overlay tunnel: WireGuard (self-hosted) vs. Tailscale (managed) for the v1 remote path — see <a class="inline" href="#auth-server"><code>AUTH-SERVER.md</code></a>.</li><li>TURN provider if the v3 relay is ever needed (self-hosted coturn vs. managed).</li></ol>
+    </section>
+<section class="doc" id="reliability">
+      <h1 class="doc-title">ScreenGrid — Reliability &amp; resource safety (memory, CPU, DoS)</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="RELIABILITY.md">RELIABILITY.md</a></p>
+<blockquote class="callout"><p>Status: <strong>proposal</strong> — coding rules that apply from Phase 2 onwards.</p></blockquote>
+<h2 id="reliability-1-why-this-document-exists">1. Why this document exists</h2>
+<p>ScreenGrid is a <strong>managed</strong> (.NET) application, so classic C/C++ buffer overflows (writing past the end of an array) cannot happen the way they do in native code. That does <strong>not</strong> make memory safe. In a remote-desktop app the real risks are <strong>resource exhaustion driven by untrusted input</strong>:</p>
+<ul><li>a peer announces a 4 GiB &quot;frame&quot; and we allocate a buffer that size → OOM;</li><li>a decompression bomb expands a few KB into gigabytes;</li><li>an unbounded queue fills faster than it drains under a flood → OOM;</li><li>many half-open sessions each hold buffers and exhaust the host;</li><li>the <strong>Raspberry Pi 3 has 1 GB RAM and no swap</strong> — one mistake takes the trust root offline.</li></ul>
+<p>This document turns &quot;be careful with memory&quot; into concrete, reviewable rules.</p>
+<h2 id="reliability-2-threat-model">2. Threat model</h2>
+<p>The adversary controls everything that arrives over the network: message lengths, field values, timing and volume. <strong>Assume any peer can be hostile.</strong> Local files and the database are semi-trusted; in-memory secrets are a target but are covered by <a class="inline" href="#auth-server"><code>AUTH-SERVER.md</code></a>.</p>
+<h2 id="reliability-3-hard-invariants-the-rules">3. Hard invariants (the rules)</h2>
+<h3 id="reliability-r1-validate-every-remote-supplied-size-before-allocating">R1 — Validate every remote-supplied size before allocating</h3>
+<p>Never allocate directly from a value read off the wire. Check it against a hard cap defined in <code>ScreenGrid.Protocol</code> first.</p>
+<pre><code>// WRONG
+byte[] payload = new byte[reader.ReadUInt32()];
+
+// RIGHT
+uint len = reader.ReadUInt32();
+if (len &gt; ProtocolLimits.MaxVideoFrame)
+{
+    throw new ProtocolException(&quot;frame too large&quot;);
+}
+
+byte[] payload = ArrayPool&lt;byte&gt;.Shared.Rent((int)len);
+try
+{
+    // read exactly len bytes into payload
+}
+finally
+{
+    ArrayPool&lt;byte&gt;.Shared.Return(payload);
+}</code></pre>
+<h3 id="reliability-r2-bound-every-queue-and-channel">R2 — Bound every queue and channel</h3>
+<p>Use <code>Channel.CreateBounded&lt;T&gt;</code> (with <code>BoundedChannelFullMode.DropOldest</code> or <code>Wait</code>) for the video / input / clipboard pipelines. <strong>Never</strong> <code>Channel.CreateUnbounded</code>.</p>
+<h3 id="reliability-r3-back-pressure-never-unbounded-growth">R3 — Back-pressure, never unbounded growth</h3>
+<p>When a consumer is slower than the producer, either drop frames, coalesce, or slow the producer. A buffer must never grow without bound.</p>
+<h3 id="reliability-r4-no-stackalloc-with-an-untrusted-length">R4 — No <code>stackalloc</code> with an untrusted length</h3>
+<p><code>stackalloc</code> is allowed only with a compile-time constant or a validated small cap (e.g. ≤ 1 KiB). Otherwise use a pooled heap buffer.</p>
+<h3 id="reliability-r5-pool-large-pinned-buffers">R5 — Pool large / pinned buffers</h3>
+<p>Frame-sized buffers come from <code>ArrayPool&lt;byte&gt;.Shared</code> (or a custom pool) and are always returned in a <code>finally</code>. Avoid new allocations on the per-frame hot path to keep the Large Object Heap quiet.</p>
+<h3 id="reliability-r6-cap-decompression">R6 — Cap decompression</h3>
+<p>If any channel compresses, limit <strong>both</strong> the output size and the expansion ratio (e.g. 64 MiB and 100×). Reject anything beyond that.</p>
+<h3 id="reliability-r7-limit-concurrency">R7 — Limit concurrency</h3>
+<p>Cap concurrent sessions, streams per session and in-flight messages per peer.</p>
+<h3 id="reliability-r8-timeout-everything">R8 — Timeout everything</h3>
+<p>Every network read/write awaits with a <code>CancellationToken</code> <strong>and</strong> a timeout. No operation may wait forever for a hostile peer.</p>
+<h3 id="reliability-r9-dispose-deterministically">R9 — Dispose deterministically</h3>
+<p>Anything owning a socket, handle, <code>Memory&lt;byte&gt;</code> lease or bitmap is <code>IDisposable</code> and is used with <code>using</code> / <code>await using</code>.</p>
+<h3 id="reliability-r10-fail-closed-and-clean-up">R10 — Fail closed and clean up</h3>
+<p>On any integrity or limit violation: stop reading, release buffers, close the connection. Do not keep state &quot;just in case&quot;.</p>
+<h2 id="reliability-4-resource-budgets">4. Resource budgets</h2>
+<table><thead><tr><th>Host</th><th>RAM</th><th>Budget for the process</th><th>Notes</th></tr></thead><tbody><tr><td>Windows client / host</td><td>8–32 GB</td><td>&lt; 500 MB steady</td><td>capture + decode pipelines</td></tr><tr><td>Raspberry Pi 3 (Auth)</td><td>1 GB</td><td>&lt; 200 MB steady, <code>MemoryMax=300M</code></td><td>no media ever flows through it</td></tr></tbody></table>
+<p>The per-frame working set must be proportional to the <strong>negotiated</strong> resolution, never to what the peer <em>claims</em>.</p>
+<h2 id="reliability-5-verification">5. Verification</h2>
+<ul><li><code>dotnet-counters monitor</code> (GC heap size, working set) on both platforms.</li><li>Instrument peak buffer usage; assert queue depths stay bounded under load.</li><li><strong>Adversarial tests (Phase 2 CI):</strong> oversized length prefixes, decompression bombs, slow-loris handshakes, message floods, many half-open connections — the process must stay within budget and keep serving.</li><li>Enable analyzers: <code>EnableNETAnalyzers</code>, <code>AnalysisLevel=latest</code>, and treat the relevant CA rules as errors (e.g. dispose correctness, large-allocation rules).</li></ul>
+<h2 id="reliability-6-review-checklist">6. Review checklist</h2>
+<ul><li class="task"><span class="checkbox">☐</span>Every wire-supplied size validated before allocation.</li><li class="task"><span class="checkbox">☐</span>No <code>Channel.CreateUnbounded</code> / unbounded <code>List</code> growth fed by the network.</li><li class="task"><span class="checkbox">☐</span><code>stackalloc</code> only with constant or validated small sizes.</li><li class="task"><span class="checkbox">☐</span>Pooled buffers returned in <code>finally</code>.</li><li class="task"><span class="checkbox">☐</span>All network I/O has a timeout + <code>CancellationToken</code>.</li><li class="task"><span class="checkbox">☐</span>Concurrency caps enforced (sessions, streams, in-flight).</li><li class="task"><span class="checkbox">☐</span>Decompression bounded by size <strong>and</strong> ratio.</li><li class="task"><span class="checkbox">☐</span>A load / DoS test added for every new network-facing code path.</li></ul>
+    </section>
+<section class="doc" id="auth-server">
+      <h1 class="doc-title">ScreenGrid — Auth &amp; Approval Service (design proposal)</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="AUTH-SERVER.md">AUTH-SERVER.md</a></p>
+<blockquote class="callout"><p>Status: <strong>proposal</strong> — not implemented. This document describes the planned central identity / two-factor approval service and how it fits the phased roadmap (Phase 2 and Phase 5).</p></blockquote>
+<h2 id="auth-server-1-purpose">1. Purpose</h2>
+<p>ScreenGrid needs a small <strong>control-plane</strong> service that:</p>
+<ol><li>Gives every device a stable <strong>identity</strong> and a way to find peers by ID (rendezvous / directory).</li><li>Enforces <strong>two-factor approval</strong> before a remote session is allowed to start.</li><li>Issues short-lived, signed <strong>session grants</strong> that the host can verify <em>offline</em> (no round-trip per input or frame).</li></ol>
+<p>It is <strong>not</strong> a media server. Video, audio and input always travel directly between the two peers (P2P / hole-punched, with a relay only when NAT forces it). The service must never proxy the media stream.</p>
+<h2 id="auth-server-2-why-a-raspberry-pi-3-is-a-good-host">2. Why a Raspberry Pi 3 is a good host</h2>
+<p>The Pi 3 (Cortex-A53, 1 GB RAM) is far too weak to relay video, but it is <strong>more than enough</strong> for a control plane that handles:</p>
+<ul><li>device registration / directory lookups,</li><li>email-code / TOTP verification, GeoIP lookups (sub-millisecond),</li><li>Ed25519 / HMAC token signing,</li><li>a tiny SQLite database and an admin web page.</li></ul>
+<p>Expected footprint: <strong>~120–200 MB RAM</strong>, near-idle CPU. Runs happily as a <code>systemd</code> service. This keeps the whole trust root on hardware <strong>you own</strong>, instead of a third-party cloud.</p>
+<h2 id="auth-server-3-roles">3. Roles</h2>
+<table><thead><tr><th>Component</th><th>Where</th><th>Responsibility</th></tr></thead><tbody><tr><td><code>Auth.Server</code></td><td>Raspberry Pi</td><td>Directory, 2FA, session-grant issuance, admin UI</td></tr><tr><td><code>Host.Agent</code></td><td>Windows host</td><td>Register device, answer incoming sessions, verify grants</td></tr><tr><td><code>Controller.Client</code></td><td>Windows viewer</td><td>Resolve peer, request session, present factor-1 credential</td></tr><tr><td><code>Approver.App</code> (opt)</td><td>Phone</td><td>Push approval (factor 2), &quot;tap to allow&quot;</td></tr></tbody></table>
+<h2 id="auth-server-4-component-protocol-overview">4. Component &amp; protocol overview</h2>
+<pre><code>        register / heartbeat        resolve peer + public key
+ Host.Agent ───────────────▶┌──────────────┐◀─────────────── Controller
+                            │  Auth.Server │
+      verify grant (offline)│  (Pi 3)      │  push approval
+              ┌────────────▶│ SQLite+Email │◀─────────────── Approver.App
+              │             └──────────────┘
+              │
+   Host.Agent ◀─── direct P2P media/input session ───▶ Controller</code></pre>
+<p><strong>Identity:</strong> on first run each device generates a long-lived <strong>Ed25519 key pair</strong>. The public key is registered with the server together with a device ID. All device→server calls are signed with the private key (or sent over a pinned-TLS channel).</p>
+<h2 id="auth-server-5-authentication-approval-flows">5. Authentication &amp; approval flows</h2>
+<p>All flows are <strong>risk-based (step-up)</strong>: the common case is friction-free, and a second factor is demanded <em>only</em> when something changed (new device, new location). This mirrors how Path of Exile, Steam and Discord behave.</p>
+<h3 id="auth-server-flow-a-email-code-trusted-device-location-recommended-firs">Flow A — email code + trusted device/location (recommended first cut)</h3>
+<p>Used for account login and first-time device enrolment:</p>
+<ol><li>User enters email → server sends a <strong>short numeric code</strong> (6–8 digits) by email. Codes are single-use, hashed at rest, TTL ~10 min, resend-throttled.</li><li>User types the code in the app. On success the <strong>device is remembered</strong>: it generates an Ed25519 key pair and receives a long-lived refresh token bound to that public key (&quot;this is now a trusted device&quot;).</li><li>Subsequent logins from a **known device <em>and</em> known location** skip the code entirely — the device signature is enough.</li></ol>
+<p><em>Why this first:</em> no authenticator app to install, everyone already has email, and it doubles as account recovery. It is a strong fit for what PoE does.</p>
+<h3 id="auth-server-flow-a2-optional-totp-upgrade">Flow A2 — optional TOTP upgrade</h3>
+<p>Power users can add a <strong>TOTP</strong> secret (Aegis / Google Authenticator) on top of email. When present, TOTP replaces the email code as the second factor (fewer emails, works offline). Email remains the fallback. Server verifies <code>HOTP</code>/<code>TOTP</code> with a ±1 step window, rate-limited.</p>
+<h3 id="auth-server-flow-b-per-session-push-approval">Flow B — per-session push approval</h3>
+<p>Used to protect <strong>incoming</strong> remote sessions (unattended access):</p>
+<ol><li>Controller resolves Host and opens a transport to it.</li><li>Host creates an <strong>approval request</strong> on the server (challenge id, controller device id, host device id, TTL ~60 s).</li><li>Server sends a <strong>push</strong> to the account owner's <code>Approver.App</code> (or shows a code in the Pi admin page). <em>Email is a poor fit here — too slow and too fragile for a &quot;connect now&quot; flow.</em></li><li>Owner taps <strong>Approve</strong> → server signs a <strong>SessionGrant</strong>.</li><li>Host verifies the grant signature against the server's public key and starts the session. Grant is single-use and expires in minutes.</li></ol>
+<h3 id="auth-server-flow-c-offline-lan-fallback">Flow C — offline / LAN fallback</h3>
+<p>When no internet is reachable, the host falls back to a local password (Factor 1) <strong>+ host-side on-screen approval</strong> (Factor 2 = physical presence). The service is an enabler, never a hard dependency for LAN sessions.</p>
+<h3 id="auth-server-location-change-detection">Location change detection</h3>
+<p>Location is a <strong>risk signal that triggers step-up</strong>, never a factor by itself.</p>
+<ul><li>Derive a coarse location from the source <strong>IP</strong> using an offline <strong>GeoLite2</strong> database (country + region + ASN) — no third-party API calls, works offline on the Pi. IP geolocation is approximate; use coarse buckets, not cities.</li><li>Keep a per-account set of <strong>trusted locations</strong> (country/region + ASN).</li><li>On login: if device is trusted <strong>and</strong> location matches a trusted entry → proceed. Otherwise → send the <strong>email code</strong> (Flow A). On success the new location is added to the trusted set.</li><li>Reduce false positives (or users get nagged constantly):<ul><li>match on <strong>country/region + ASN</strong>, not precise coordinates;</li><li>ignore mobile-carrier rotation and known dynamic-IP ranges where reasonable;</li><li>offer &quot;trust this location&quot; + let the user manage/revoke trusted entries in the admin UI;</li><li>a password/OAuth change should invalidate trusted devices/locations.</li></ul></li></ul>
+<blockquote class="callout"><p><strong>Security note (important):</strong> email is <em>not</em> a strong second factor on its own — if the attacker owns the mailbox, they pass. Its real strength here comes from combining it with the <strong>trusted-device key</strong> (something you have that the attacker does not, unless they also have the physical machine). That pairing is what makes the PoE-style flow actually defensible.</p></blockquote>
+<h2 id="auth-server-6-session-grant-token">6. Session grant (token)</h2>
+<ul><li><strong>Algorithm:</strong> Ed25519 (fast, tiny signatures) — fallback HS256 shared secret.</li><li><strong>Claims:</strong> <code>sub</code> (session id), <code>host</code> (host device id), <code>client</code> (controller device id), <code>iat</code>, <code>exp</code> (short, e.g. 5 min), <code>scope</code>.</li><li><strong>Verification:</strong> host validates the signature <em>offline</em> using the server's public key (cached). No per-frame or per-input call to the server.</li><li>Media/input themselves are end-to-end encrypted with the two device keys; the grant only authorises <em>starting</em> the session.</li></ul>
+<h2 id="auth-server-7-data-model-sqlite">7. Data model (SQLite)</h2>
+<pre><code>Account        (id, email, totp_secret_enc, pin_hash, created_utc)
+Device         (id, account_id, display_name, pubkey, last_seen_utc, approved)
+TrustedDevice  (device_id, refresh_token_hash, first_seen_utc, last_seen_utc)
+TrustedLocation(account_id, country, region, asn, first_seen_utc, last_seen_utc)
+EmailCode      (id, account_id, code_hash, purpose, expires_utc, attempts)
+Grant          (jti, host_id, client_id, issued_utc, expires_utc, used)
+AuditEvent     (id, account_id, kind, detail, ip, geo, utc)</code></pre>
+<p>Secrets (TOTP, PIN) are encrypted at rest; PIN/password stored as <strong>Argon2id</strong> hashes only. Email codes and refresh tokens are stored <strong>hashed</strong>. Never store a raw password or a raw code.</p>
+<h2 id="auth-server-8-technology-choices">8. Technology choices</h2>
+<table><thead><tr><th>Concern</th><th>Choice</th></tr></thead><tbody><tr><td>Server runtime</td><td>ASP.NET Core Minimal API (.NET 10, ARM64)</td></tr><tr><td>Transport</td><td>HTTPS (Kestrel) behind a self-signed or Let's Encrypt cert</td></tr><tr><td>Storage</td><td>SQLite (<code>Microsoft.Data.Sqlite</code>), no external DB</td></tr><tr><td>Email code</td><td><code>MailKit</code> over SMTP (587) or a provider HTTP API</td></tr><tr><td>Email provider</td><td>Brevo / Postmark / Mailjet / SES (home ISPs block outbound 25)</td></tr><tr><td>GeoIP</td><td><code>MaxMind.GeoIP2</code> + GeoLite2-City.mmdb (bundled, offline)</td></tr><tr><td>TOTP (opt-in)</td><td><code>Otp.NET</code></td></tr><tr><td>Tokens</td><td><code>NSec.Cryptography</code> (Ed25519) or <code>System.IdentityModel</code> JWT</td></tr><tr><td>Hashing</td><td><code>Konscious.Security.Cryptography.Argon2</code></td></tr><tr><td>Push (Flow B)</td><td>WebSocket to <code>Approver.App</code>, or self-hosted ntfy/UnifiedPush</td></tr><tr><td>Admin UI</td><td>Minimal Razor Pages served by the same process</td></tr><tr><td>Hosting on the Pi</td><td><code>systemd</code> unit, auto-start on boot, AOT-friendly</td></tr></tbody></table>
+<h2 id="auth-server-9-raspberry-pi-3-deployment">9. Raspberry Pi 3 deployment</h2>
+<pre><code># On the Pi (64-bit Raspberry Pi OS)
+dotnet publish src/ScreenGrid.Auth.Server -c Release -r linux-arm64
+sudo cp -r publish/* /opt/screengrid-auth/
+sudo systemctl enable --now screengrid-auth.service</code></pre>
+<ul><li>Put it behind the home router; expose only HTTPS (via a reverse tunnel or port-forward + Let's Encrypt).</li><li>Keep a nightly <code>sqlite3 .backup</code> to USB storage.</li><li>Monitor memory: if it ever exceeds ~300 MB, something is wrong (media must not be flowing through it).</li></ul>
+<h2 id="auth-server-10-security-checklist">10. Security checklist</h2>
+<ul><li class="task"><span class="checkbox">☐</span>TLS everywhere; certificate pinning for device↔server.</li><li class="task"><span class="checkbox">☐</span>Argon2id for secrets; TOTP secrets encrypted at rest.</li><li class="task"><span class="checkbox">☐</span>Email codes hashed at rest, single-use, TTL-bounded, resend-throttled.</li><li class="task"><span class="checkbox">☐</span>Rate-limit + lockout on failed logins / codes / TOTP; alert on new-location step-ups so a compromise is visible.</li><li class="task"><span class="checkbox">☐</span>Session grants single-use, short TTL, bound to host+client ids.</li><li class="task"><span class="checkbox">☐</span>Audit log of every approval / denial and every location step-up.</li><li class="task"><span class="checkbox">☐</span>No media or input ever relayed by the service.</li><li class="task"><span class="checkbox">☐</span>Signed, verifiable releases of the server binary.</li></ul>
+<h2 id="auth-server-11-roadmap-integration">11. Roadmap integration</h2>
+<p>The service is introduced across two phases rather than as new ones:</p>
+<ul><li><strong>Phase 2 (Signaling):</strong> ship <code>Auth.Server</code> in its minimal form — device registration, directory/rendezvous, and <strong>email-code login + trusted device / location</strong> (Flow A). This immediately unblocks peer discovery by ID.</li><li><strong>Phase 5 (Security):</strong> add <code>Approver.App</code> push approval (Flow B), optional TOTP (Flow A2), session grants with Ed25519, offline verification in <code>Host.Agent</code>, and the audit log.</li></ul>
+<h2 id="auth-server-12-open-questions">12. Open questions</h2>
+<ol><li>Do we want our <strong>own mobile approver app</strong> for Flow B, or is on-screen host approval enough for v1? (Email is chosen as the <em>account-login</em> factor; it is too slow for per-session approval.)</li><li>Is the Pi reachable from the internet (port-forward) or should it sit behind a tunnel (Tailscale / Cloudflare Tunnel)? — the same choice drives the v1 remote path for media, see <a class="inline" href="#protokol"><code>PROTOCOL.md §8 D2</code></a> (overlay tunnel for v1; STUN/ICE in v2, TURN in v3).</li><li>Which <strong>email provider</strong> do we standardise on for sending codes (deliverability from a home connection is the main risk)?</li><li>Should accounts be optional (device-ID only, no email) to keep friction low, like AnyDesk's anonymous mode?</li></ol>
+    </section>
+<section class="doc" id="ui">
+      <h1 class="doc-title">ScreenGrid — Phase 1 UI</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="UI.md">UI.md</a></p>
+<p>This document describes the user interface delivered in <strong>Phase 1</strong> and how to extend it. Everything here is presentation only: no network, crypto, capture or input code exists yet.</p>
+<h2 id="ui-window-shell-views-mainwindow-xaml">Window shell (<code>Views/MainWindow.xaml</code>)</h2>
+<p>The shell is a WPF-UI <code>FluentWindow</code> with the custom title bar enabled (<code>ExtendsContentIntoTitleBar=&quot;True&quot;</code>), a Mica backdrop and rounded corners. It has three rows:</p>
+<pre><code>+---------------------------------------------------------------+
+|  [icon] ScreenGrid                  [theme] [settings]        |  ui:TitleBar
++---------------------------------------------------------------+
+|                                                               |
+|                     ContentControl                            |  CurrentView
+|                 (Home / Session / Settings)                   |
+|                                                               |
++---------------------------------------------------------------+
+|  Ready                              ScreenGrid  .  v0.1.0      |  status bar
++---------------------------------------------------------------+</code></pre>
+<ul><li>The <strong>title bar</strong> shows the localized app name, an app icon and two buttons — a dark/light <strong>theme toggle</strong> and a shortcut to <strong>Settings</strong>.</li><li>The middle <code>ContentControl</code> is bound to <code>MainWindowViewModel.CurrentView</code>.</li><li>The <strong>status bar</strong> shows the current status text (left) and the app name + version (right).</li></ul>
+<h2 id="ui-home-screen-views-homeview-xaml">Home screen (<code>Views/HomeView.xaml</code>)</h2>
+<p>A two-column layout, matching the familiar AnyDesk / Supremo front page.</p>
+<h3 id="ui-left-share-your-computer-sharecomputerviewmodel">Left — &quot;Share Your Computer&quot; (<code>ShareComputerViewModel</code>)</h3>
+<table><thead><tr><th>Element</th><th>Binding</th><th>Notes</th></tr></thead><tbody><tr><td>Your ID</td><td><code>Share.DisplayId</code></td><td>9 digits, grouped <code>123 456 789</code></td></tr><tr><td>Copy ID</td><td><code>Share.CopyIdCommand</code></td><td>copies to the clipboard</td></tr><tr><td>Password</td><td><code>Share.DisplayPassword</code></td><td>masked (dots) unless revealed</td></tr><tr><td>Show / hide</td><td><code>Share.TogglePasswordVisibilityCommand</code></td><td>tooltip from <code>TogglePasswordVisibilityTooltip</code></td></tr><tr><td>Regenerate</td><td><code>Share.RegeneratePasswordCommand</code></td><td>new random 9-char password</td></tr><tr><td>Status dot + text</td><td><code>Share.StatusText</code></td><td>green when accepting, grey when not</td></tr><tr><td>Incoming toggle</td><td><code>Share.IsAcceptingConnections</code></td><td><code>ui:ToggleSwitch</code></td></tr></tbody></table>
+<h3 id="ui-right-get-access-to-computer-accesscomputerviewmodel">Right — &quot;Get Access to Computer&quot; (<code>AccessComputerViewModel</code>)</h3>
+<table><thead><tr><th>Element</th><th>Binding</th><th>Notes</th></tr></thead><tbody><tr><td>Remote ID</td><td><code>Access.RemoteId</code></td><td><code>ui:TextBox</code>, updates the source on each keystroke</td></tr><tr><td>Password</td><td><code>Access.Password</code></td><td><code>ui:PasswordBox</code> with a built-in reveal button</td></tr><tr><td>Connect</td><td><code>Access.ConnectCommand</code></td><td>disabled until the remote ID is non-empty</td></tr><tr><td>Recent connections</td><td><code>Access.RecentConnections</code></td><td><code>ItemsControl</code>; each row runs <code>ConnectToRecentCommand</code></td></tr></tbody></table>
+<p><code>Connect</code> (and clicking a recent entry) calls <code>IAppNavigator.StartSession(remoteId)</code>, which switches the shell to the session view.</p>
+<h2 id="ui-session-screen-views-sessionview-xaml">Session screen (<code>Views/SessionView.xaml</code>)</h2>
+<p>Placeholder remote-session screen:</p>
+<ul><li>Heading <code>SessionViewModel.Title</code> -&gt; &quot;Session with <code>&lt;id&gt;</code>&quot; and a status line.</li><li>A <strong>Disconnect</strong> button (<code>DisconnectCommand</code>) returning to the home screen.</li><li>A <code>VideoSurface</code> control showing the &quot;Waiting for remote video...&quot; hint.</li></ul>
+<h2 id="ui-settings-screen-views-settingsview-xaml">Settings screen (<code>Views/SettingsView.xaml</code>)</h2>
+<p>Placeholder settings with General / Security / About sections and three presentational toggles. Nothing is persisted yet.</p>
+<h2 id="ui-controls-videosurface-xaml"><code>Controls/VideoSurface.xaml</code></h2>
+<p>A <strong>standalone, reusable</strong> <code>UserControl</code> (dark frame + placeholder icon/text) intended to present a decoded video frame. It deliberately has no dependency on the remote-control pipeline so the future community/streaming app can reuse it.</p>
+<p>It exposes one dependency property:</p>
+<pre><code>&lt;controls:VideoSurface PlaceholderText=&quot;{x:Static res:Strings.WaitingForVideo}&quot; /&gt;</code></pre>
+<h2 id="ui-theming">Theming</h2>
+<ul><li><code>App.xaml</code> merges <code>ui:ThemesDictionary Theme=&quot;Dark&quot;</code> and <code>ui:ControlsDictionary</code>.</li><li>Theme-aware brushes (<code>CardBackgroundFillColorDefaultBrush</code>, <code>TextFillColorPrimaryBrush</code>, <code>CardStrokeColorDefaultBrush</code>, ...) are referenced with <code>DynamicResource</code>, so they follow the active theme automatically.</li><li><code>Resources/Brand.xaml</code> holds the brand accent colours (<code>BrandAccentBrush</code>, <code>OnlineStatusBrush</code>, ...) and the shared layout styles (<code>PanelCardStyle</code>, <code>SectionTitleStyle</code>, <code>FieldLabelStyle</code>, <code>IdDisplayStyle</code>).</li><li><code>MainWindowViewModel.ToggleThemeCommand</code> calls <code>ApplicationThemeManager.Apply(...)</code> to switch dark/light at runtime.</li></ul>
+<h2 id="ui-localization">Localization</h2>
+<p>English lives in <code>Resources/Strings.resx</code> (the <strong>neutral</strong> culture). <code>Resources/Strings.Designer.cs</code> is a hand-written, strongly-typed accessor so that everything works with plain <code>dotnet build</code> (no Visual Studio designer required).</p>
+<p>Strings are used in two ways:</p>
+<ul><li>From <strong>XAML</strong>: <code>Text=&quot;{x:Static res:Strings.ShareTitle}&quot;</code>.</li><li>From <strong>C#</strong>: <code>Strings.StatusReady</code>.</li></ul>
+<h3 id="ui-adding-a-string">Adding a string</h3>
+<ol><li>Add a <code>&lt;data name=&quot;Key&quot;&gt;&lt;value&gt;...&lt;/value&gt;&lt;/data&gt;</code> entry to <code>Strings.resx</code>.</li><li>Add a matching <code>public static string Key =&gt; Get(nameof(Key));</code> to <code>Strings.Designer.cs</code>.</li></ol>
+<h3 id="ui-adding-a-language">Adding a language</h3>
+<p>Drop a satellite resource next to the neutral one (e.g. <code>Resources/Strings.da.resx</code> for Danish). The <code>ResourceManager</code> picks it up automatically. To force a culture at runtime, set <code>ScreenGrid.Client.App.Resources.Strings.Culture</code>.</p>
+<h2 id="ui-architecture-mvvm">Architecture (MVVM)</h2>
+<pre><code>MainWindowViewModel  --implements--&gt;  IAppNavigator
+   |  CurrentView (object)
+   +-- HomeViewModel ---&gt; ShareComputerViewModel
+   |                 \--&gt; AccessComputerViewModel ---&gt; StartSession(...)
+   +-- SessionViewModel
+   \-- SettingsViewModel</code></pre>
+<ul><li>View models use <code>CommunityToolkit.Mvvm</code> (<code>ObservableObject</code>, <code>[ObservableProperty]</code>, <code>[RelayCommand]</code>).</li><li><code>App.xaml</code> maps view-model types to views with implicit <code>DataTemplate</code>s, so the shell simply shows a view-model and WPF resolves the matching view.</li><li>View models never reference <code>Window</code>/<code>UserControl</code>; navigation goes through <code>IAppNavigator</code>, which the shell implements.</li></ul>
+<h3 id="ui-adding-a-new-view">Adding a new view</h3>
+<ol><li>Create <code>MyViewModel</code> in <code>ViewModels/</code> (derive from <code>ObservableObject</code>).</li><li>Create <code>MyView.xaml</code> (+ <code>.xaml.cs</code>) in <code>Views/</code>.</li><li>Register a <code>DataTemplate</code> in <code>App.xaml</code> mapping <code>MyViewModel</code> -&gt; <code>MyView</code>.</li><li>Navigate by assigning the view model to <code>MainWindowViewModel.CurrentView</code>.</li></ol>
+<h2 id="ui-current-limitations-intentional-for-phase-1">Current limitations (intentional for Phase 1)</h2>
+<ul><li>No networking, encryption, capture or input handling.</li><li>The device ID and password are generated locally and are <strong>not persisted</strong>.</li><li>Recent connections are sample data.</li><li>Settings toggles are not saved.</li><li>The theme choice is not persisted across restarts.</li></ul>
+    </section>
+<section class="doc" id="roadmap">
+      <h1 class="doc-title">ScreenGrid — Roadmap</h1>
+      <p class="doc-source">Kilde: <a class="inline" href="ROADMAP.md">ROADMAP.md</a></p>
+<p>Delivery is split into phases. Each phase should build and run on its own.</p>
+<table><thead><tr><th>Phase</th><th>Scope</th><th>Status</th></tr></thead><tbody><tr><td>0</td><td>Repository setup, solution, docs</td><td>Done</td></tr><tr><td>1</td><td><strong>Front-page UI</strong> (this phase)</td><td>Done</td></tr><tr><td>2</td><td>Signaling + ICE / NAT traversal</td><td>Not started</td></tr><tr><td>3</td><td>Screen capture + video encoding</td><td>Not started</td></tr><tr><td>4</td><td>Remote input (mouse / keyboard)</td><td>Not started</td></tr><tr><td>5</td><td>Security hardening (E2EE, identity)</td><td>Not started</td></tr><tr><td>6</td><td>Community / streaming application</td><td>Not started</td></tr></tbody></table>
+<h2 id="roadmap-phase-0-setup">Phase 0 — Setup</h2>
+<ul><li>Solution (<code>ScreenGrid.slnx</code>), <code>Directory.Build.props</code>, <code>.editorconfig</code>, <code>.gitignore</code>.</li><li>Documentation (<code>README.md</code>, <code>docs/</code>).</li><li>Chosen stack: .NET 10 / WPF / <code>CommunityToolkit.Mvvm</code> / <code>WPF-UI</code>.</li></ul>
+<h2 id="roadmap-phase-1-front-page-ui">Phase 1 — Front-page UI</h2>
+<ul><li>Custom-chrome shell (<code>FluentWindow</code>), dark theme by default, light toggle.</li><li>Home screen: <strong>Share Your Computer</strong> + <strong>Get Access to Computer</strong> panels.</li><li>Placeholder session screen hosting the reusable <code>VideoSurface</code> control.</li><li>Placeholder settings screen.</li><li><code>.resx</code> localization (English neutral).</li></ul>
+<h2 id="roadmap-phase-2-signaling-connectivity">Phase 2 — Signaling &amp; connectivity</h2>
+<p>Planned components: <code>Signaling.Server</code>, <code>Host.Agent</code>, <code>ScreenGrid.Transport</code>.</p>
+<ul><li>Device registration and rendezvous by ID.</li><li>Session negotiation and ICE candidate exchange.</li><li>TURN/STUN for NAT traversal.</li><li>Direct (LAN) and relayed (WAN) paths.</li><li><code>Auth.Server</code> (control plane, Raspberry Pi): device directory + TOTP login — see <a class="inline" href="#auth-server"><code>docs/AUTH-SERVER.md</code></a>.</li></ul>
+<h2 id="roadmap-phase-3-capture-media">Phase 3 — Capture &amp; media</h2>
+<p>Planned component: <code>ScreenGrid.Media</code>.</p>
+<ul><li>Windows Desktop Duplication API capture.</li><li>Hardware-accelerated H.264/AV1 encoding.</li><li>Frame pacing and adaptive bitrate.</li><li><code>VideoSurface</code> fed by a real decoder.</li><li>Monitor selection, multi-monitor support.</li></ul>
+<h2 id="roadmap-phase-4-remote-input">Phase 4 — Remote input</h2>
+<p>Planned component: <code>ScreenGrid.RemoteControl</code>.</p>
+<ul><li>Mouse, keyboard and clipboard injection (<code>SendInput</code>).</li><li>Input channel over the data session.</li><li>Session permission prompts on the host.</li></ul>
+<h2 id="roadmap-phase-5-security">Phase 5 — Security</h2>
+<p>Planned component: <code>ScreenGrid.Crypto</code>.</p>
+<ul><li>Per-device identity keys and address book.</li><li>End-to-end encryption of the media and input channels.</li><li>Session passwords and one-time tokens.</li><li>Audit logging and lock-screen behaviour.</li><li>Two-factor session approval + signed grants — see <a class="inline" href="#auth-server"><code>docs/AUTH-SERVER.md</code></a>.</li></ul>
+<h2 id="roadmap-phase-6-community-app">Phase 6 — Community app</h2>
+<ul><li>Reuse <code>Transport</code> + <code>Media</code> for a Discord-style SFU application.</li><li>Group streams / screen sharing.</li><li>Presence and chat.</li></ul>
+    </section>
+  </main>
+</div>
+
+<script>
+const tocLinks = [...document.querySelectorAll('#toc a[href^="#"]')];
+const byId = new Map(tocLinks.map(a => [a.getAttribute('href').slice(1), a]));
+const targets = [...byId.keys()].map(id => document.getElementById(id)).filter(Boolean);
+
+function syncToc(){
+  if(!targets.length) return;
+  const y = window.scrollY + 150;
+  let active = targets[0];
+  for(const t of targets){
+    if(t.getBoundingClientRect().top + window.scrollY <= y) active = t;
+  }
+  tocLinks.forEach(a => a.classList.remove('active'));
+  const link = byId.get(active.id);
+  if(link) link.classList.add('active');
+}
+window.addEventListener('scroll', syncToc, {passive:true});
+window.addEventListener('resize', syncToc);
+syncToc();
+</script>
+</body>
+</html>

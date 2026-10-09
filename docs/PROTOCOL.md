@@ -1,7 +1,10 @@
 # ScreenGrid — Connection protocol (handshake & session design)
 
-> Status: **proposal** — not implemented. Covers Phase 2 (Signaling / Transport)
-> and Phase 5 (Security).
+> Status: **proposal** — design agreed, not implemented. Covers Phase 2
+> (Signaling / Transport) and Phase 5 (Security).
+>
+> **Transport decided (§8):** QUIC / TLS 1.3 (`System.Net.Quic`), NAT traversal
+> staged — LAN + overlay tunnel first, STUN/ICE in v2, TURN in v3.
 
 ## 1. Why this document exists
 
@@ -139,11 +142,71 @@ Runs over the first bi-directional control stream:
   stopped responding beyond its TTL.
 * Errors are versioned / tagged codes — never raw exception text sent to the peer.
 
-## 8. Open questions
+## 8. Decisions
 
-1. QUIC (`System.Net.Quic`) vs. a WebRTC stack vs. Noise-over-UDP for the media
-   path — decide once in Phase 2 and record it here.
-2. Certificate model for QUIC: self-signed-per-device + pinning, or a private
-   `Auth.Server` CA issuing short-lived device certificates?
-3. Do we need a separate data-phase key beyond the TLS 1.3 records, or is the
-   QUIC record layer sufficient for v1?
+### D1 — Transport: QUIC (`System.Net.Quic` / MsQuic) ✅ decided
+
+**Chosen:** QUIC as the single secure transport for all channels.
+**Rejected:** a WebRTC stack (DTLS/SRTP/SCTP) and Noise-over-UDP.
+
+Rationale:
+
+* **Security.** TLS 1.3 is mandatory in QUIC — there is no downgrade path and no
+  weak cipher suite to negotiate. The handshake is encrypted from the first byte
+  (device metadata and version never travel in cleartext), packet numbers give
+  built-in replay protection, and ephemeral key agreement gives forward secrecy.
+  This satisfies §2 without us writing a single line of key schedule.
+* **Multiplexing.** Independent streams with independent flow control mean a
+  stalled `video` stream cannot block `input` or `control`. This is the single
+  most important property for an interactive remote-desktop session.
+* **Handshake latency.** 1-RTT (vs. 2–3 RTT for TCP + TLS).
+* **Migration.** Connection IDs let a session survive a Wi-Fi → cellular change.
+* **Deployment.** `Client.App` and `Host.Agent` are both Windows, where MsQuic
+  ships with the OS (Windows 11 / Server 2022+). No extra dependency. Linux
+  would need `libmsquic`, but no Linux process uses QUIC — `Auth.Server` on the
+  Pi is plain HTTPS + SQLite only.
+
+Caveats accepted:
+
+* **0-RTT is replayable.** Input events and session grants MUST NOT be sent in
+  0-RTT. For v1, 0-RTT is disabled entirely; it may later be enabled for
+  idempotent media data only.
+* **Peak throughput.** On a clean LAN a single bulk video stream is comparable
+  to TCP; QUIC's win is latency under loss and multiplexing, not raw bandwidth.
+  Some ISPs QoS-throttle UDP, so a TCP fallback remains on the roadmap.
+
+### D2 — NAT traversal: staged, ICE not in v1 ✅ decided
+
+ICE/STUN/TURN arose for WebRTC and pairing it with QUIC is *not* a
+standardised, well-trodden path: ICE nominates a UDP candidate pair while QUIC
+assumes it owns its socket and migrates by connection ID. To keep the risk out
+of the critical path we stage it:
+
+| Stage        | Mechanism                                                  |
+| ------------ | ---------------------------------------------------------- |
+| **v1**       | LAN only; remote access via an overlay tunnel (WireGuard / Tailscale), per [`AUTH-SERVER.md`](AUTH-SERVER.md). No ICE code. |
+| **v2**       | STUN + UDP hole-punching (ICE-lite: `host` + `srflx` candidates) for a direct internet path. |
+| **v3**       | TURN relay as the last resort behind symmetric NAT / CGNAT. |
+
+`ScreenGrid.Transport` keeps the ICE/STUN/TURN seam in its interface from day
+one, but the implementations land in that order.
+
+### D3 — Certificate model: self-signed-per-device + pinning ✅ decided
+
+Each device generates a **self-signed certificate bound to its Ed25519 identity
+key**. The peer verifies the certificate against the public key obtained from the
+directory and **pins** it — no public CA, no private `Auth.Server` CA. This keeps
+deployment (especially the Pi) free of revocation infrastructure: revoking a
+device is a directory action, not a CA operation.
+
+### D4 — Data-phase keys: TLS 1.3 records only for v1 ✅ decided
+
+No additional application-layer key beyond the QUIC/TLS 1.3 record layer in v1.
+Rekeying uses QUIC's key update. A separate HKDF-derived key is only introduced
+if a raw UDP/Noise fallback is ever added.
+
+## 9. Remaining open questions
+
+1. Overlay tunnel: WireGuard (self-hosted) vs. Tailscale (managed) for the v1
+   remote path — see [`AUTH-SERVER.md`](AUTH-SERVER.md).
+2. TURN provider if the v3 relay is ever needed (self-hosted coturn vs. managed).

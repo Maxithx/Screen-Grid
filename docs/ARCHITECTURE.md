@@ -36,7 +36,8 @@ plus a primary rule:
   and ask *"does this still have one responsibility?"*.
 * The hard ceiling is **mandatory** — a file over 1000 lines must be split
   before merge.
-* **Exceptions** (do not split, document why in the PR): auto-generated files,
+* **Exceptions** (do not split, document why in the PR): auto-generated files
+  (including `docs/documentation.html`, produced by `tools/build-docs.mjs`),
   `.resx` / `.Designer.cs` accessors, localization resource tables, and pure
   XAML layout that is genuinely one screen.
 
@@ -126,8 +127,11 @@ Recommended (add in Phase 2 CI):
 | Document              | Contents                                   |
 | --------------------- | ------------------------------------------ |
 | `README.md`           | Project overview + build instructions      |
+| `docs/documentation.html` | Browsable documentation hub (generated) |
+| `docs/architecture-map.html` | Interactive architecture node map    |
 | `docs/ARCHITECTURE.md`| This file — structure & coding rules       |
 | `docs/PROTOCOL.md`    | Handshake & connection protocol design      |
+| `docs/TRANSPORT.md`   | QUIC / TLS 1.3 explained (what & why)       |
 | `docs/RELIABILITY.md` | Memory / resource-safety & DoS rules       |
 | `docs/ROADMAP.md`     | Phase plan                                 |
 | `docs/UI.md`          | Phase-1 UI reference                       |
